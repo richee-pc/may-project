@@ -221,6 +221,24 @@ main{padding-bottom:calc(92px + env(safe-area-inset-bottom,0px))}
 .sync-note.warn{color:var(--gold);background:var(--gold-soft)}
 .user-tag.wait{color:var(--gold);background:var(--gold-soft)}
 .user-tag.ex{color:var(--ink-3);background:var(--surface-2)}
+.guide{border-radius:20px;padding:16px;background:var(--gold-soft);display:flex;flex-direction:column;gap:10px}
+.guide-head{display:flex;align-items:center;gap:8px;font-family:var(--f-display);font-weight:800;font-size:17px;color:var(--ink)}
+.guide-head .ic{color:var(--gold);width:20px;height:20px}
+.guide-steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.guide-steps li{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;background:var(--surface);border-radius:14px;padding:10px 10px 10px 12px}
+.guide-steps li p{font-size:14px;line-height:1.45}
+.guide-steps li p small{display:block;font-size:12px;color:var(--ink-3);margin-top:2px}
+.guide-steps .btn{min-height:36px;padding:0 12px;font-size:13px}
+.guide-flow{font-size:12.5px;color:var(--ink-2);line-height:1.6}
+.sn{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--ink);color:var(--bg);font-family:var(--f-mono);font-size:11px;font-weight:600;flex:none;vertical-align:1px;margin-right:6px;line-height:1}
+.sn.lg{width:28px;height:28px;font-size:13px;margin:0}
+.sn.c{background:var(--c);color:var(--on)} .sn.d{background:var(--d);color:var(--on)}
+.btn .sn{margin:0;background:var(--on)}
+.btn-c .sn{color:var(--c)} .btn-d .sn{color:var(--d)}
+.guide-steps small .sn{width:16px;height:16px;font-size:9.5px;margin:0 3px 0 0}
+.opt{font-family:var(--f-body);font-size:11px;font-weight:600;color:var(--ink-3);background:var(--surface-2);border-radius:6px;padding:1px 6px;margin-left:6px}
+.flash{animation:flash 1.8s ease-out 1}
+@keyframes flash{0%,45%{box-shadow:0 0 0 4px var(--gold)}100%{box-shadow:0 0 0 0 transparent}}
 .foot{margin-top:34px;padding-top:16px;border-top:1px solid var(--line);font-size:12px;color:var(--ink-3);display:flex;flex-wrap:wrap;gap:6px 16px;justify-content:space-between}
 
 /* ---------- Track C: map ---------- */
@@ -492,6 +510,19 @@ svg.leaflet-zoom-animated{will-change:transform}
     </div>
 
     <div class="sec">
+      <div class="guide">
+        <div class="guide-head"><svg class="ic" viewBox="0 0 24 24" data-i="route"></svg>답사 당일, 이 순서대로 하세요</div>
+        <ol class="guide-steps">
+          <li><span class="sn lg">1</span><p>반 코드와 이름 입력<small>처음 한 번만 · 이 화면 아래 "선생님께 제출" 칸</small></p><button class="btn" type="button" data-go="home|#syncCard|#sync-code">입력하기</button></li>
+          <li><span class="sn lg c">2</span><p>장소마다 기록<small>오월의 길 · 사진, 단차·폭, 현재 위치</small></p><button class="btn" type="button" data-go="path|#pinForm|#f-name">바로가기</button></li>
+          <li><span class="sn lg d">3</span><p>소감 남기기<small>오월의 메아리 · 한 문장 이상</small></p><button class="btn" type="button" data-go="echo|#msgForm|#m-name">바로가기</button></li>
+          <li><span class="sn lg d">4</span><p>현장 조사 기록<small>오월의 메아리 · 의견·후기 받는 곳 찾기</small></p><button class="btn" type="button" data-go="echo|#surveyCard|#sv-where">바로가기</button></li>
+        </ol>
+        <p class="guide-flow">화면 맨 아래 탭으로도 이동할 수 있어요: <b>홈</b> · <b>오월의 길</b> · <b>오월의 메아리</b></p>
+      </div>
+    </div>
+
+    <div class="sec">
       <div class="sec-head"><h2>두 개의 트랙</h2><span class="muted">탭해서 바로 체험</span></div>
       <div class="tracks">
         <a class="track track--c" href="#path">
@@ -526,8 +557,8 @@ svg.leaflet-zoom-animated{will-change:transform}
     </div>
 
     <div class="sec">
-      <div class="card">
-        <div class="card-head"><div><h3>선생님께 제출</h3><div class="sub">입력한 핀과 소감을 선생님 Google 시트로 보냅니다. 이름은 선생님만 볼 수 있어요</div></div><svg class="ic" viewBox="0 0 24 24" data-i="upload" style="color:var(--gold);width:22px;height:22px"></svg></div>
+      <div class="card" id="syncCard" style="scroll-margin-top:72px">
+        <div class="card-head"><div><h3><span class="sn">1</span>선생님께 제출</h3><div class="sub">입력한 핀과 소감을 선생님 Google 시트로 보냅니다. 이름은 선생님만 볼 수 있어요</div></div><svg class="ic" viewBox="0 0 24 24" data-i="upload" style="color:var(--gold);width:22px;height:22px"></svg></div>
         <div class="sync">
           <div class="row2">
             <label class="field"><span>반 코드</span><input id="sync-code" placeholder="선생님이 알려 준 코드" autocomplete="off" autocapitalize="off" maxlength="20"></label>
@@ -578,6 +609,13 @@ svg.leaflet-zoom-animated{will-change:transform}
       </div>
     </div>
 
+    <div class="guide" style="margin-bottom:14px">
+      <div class="guide-head"><svg class="ic" viewBox="0 0 24 24" data-i="route"></svg>장소에 도착하면</div>
+      <ol class="guide-steps">
+        <li><span class="sn lg c">✓</span><p>아래 <b>새 현장 데이터 등록</b>에 기록해요<small><span class="sn">1</span>장소명·유형 → <span class="sn">2</span>단차·폭 → <span class="sn">3</span>사진 → <span class="sn">4</span>현재 위치 → <span class="sn">5</span>지도에 핀 추가</small></p><button class="btn btn-c" type="button" data-go="path|#pinForm|#f-name">기록하기</button></li>
+      </ol>
+    </div>
+
     <div class="path-grid">
       <div class="map-wrap" id="mapWrap">
         <div id="map" role="application" aria-label="구전남도청 일대 무장애 지도"></div>
@@ -624,17 +662,17 @@ svg.leaflet-zoom-animated{will-change:transform}
           <button class="btn btn-sm" type="button" id="routeBtn"><svg class="ic" viewBox="0 0 24 24" data-i="route"></svg>경로 찾기 실행</button>
         </div>
 
-        <form class="card form-stack" id="pinForm" novalidate>
+        <form class="card form-stack" id="pinForm" novalidate style="scroll-margin-top:72px">
           <div class="card-head" style="margin-bottom:0"><div><h3>새 현장 데이터 등록</h3><div class="sub">답사에서 기록한 내용을 입력하면 지도에 바로 핀이 생겨요</div></div><span class="tag" style="background:var(--c-soft);color:var(--c)">학생 실습</span></div>
-          <label class="field"><span>장소명</span><input id="f-name" placeholder="예: 별관 뒤편 우회 경사로" maxlength="40"></label>
-          <div class="field"><span class="field-label" id="f-type-label">시설 유형</span><div class="radio-chips type-grid" id="f-type" role="radiogroup" aria-labelledby="f-type-label"></div></div>
+          <label class="field"><span><span class="sn">1</span>장소명</span><input id="f-name" placeholder="예: 별관 뒤편 우회 경사로" maxlength="40"></label>
+          <div class="field"><span class="field-label" id="f-type-label"><span class="sn">1</span>시설 유형</span><div class="radio-chips type-grid" id="f-type" role="radiogroup" aria-labelledby="f-type-label"></div></div>
           <div class="row2">
-            <label class="field"><span>단차 높이<em>cm</em></span><input id="f-step" type="number" inputmode="decimal" min="0" step="0.5" value="0"></label>
-            <label class="field"><span>경사로·통로 폭<em>cm</em></span><input id="f-width" type="number" inputmode="numeric" min="0" step="1" placeholder="150"></label>
+            <label class="field"><span><span class="sn">2</span>단차 높이<em>cm</em></span><input id="f-step" type="number" inputmode="decimal" min="0" step="0.5" value="0"></label>
+            <label class="field"><span><span class="sn">2</span>통로 폭<em>cm</em></span><input id="f-width" type="number" inputmode="numeric" min="0" step="1" placeholder="150"></label>
           </div>
-          <label class="field"><span>상세 설명</span><textarea id="f-desc" rows="3" placeholder="노면 상태, 손잡이 유무, 우회로 방향 등을 적어 주세요"></textarea></label>
+          <label class="field"><span>상세 설명<span class="opt">선택</span></span><textarea id="f-desc" rows="3" placeholder="노면 상태, 손잡이 유무, 우회로 방향 등을 적어 주세요"></textarea></label>
           <div class="field">
-            <span class="field-label">현장 사진</span>
+            <span class="field-label"><span class="sn">3</span>현장 사진 <em>왼쪽 카메라 칸을 눌러요</em></span>
             <div class="photo-row">
               <label class="photo-prev" id="f-photo-prev" for="f-photo" title="사진 선택"><svg class="ic" viewBox="0 0 24 24" data-i="camera"></svg></label>
               <input id="f-photo" type="file" accept="image/*" hidden>
@@ -642,7 +680,7 @@ svg.leaflet-zoom-animated{will-change:transform}
             </div>
           </div>
           <div class="field">
-            <span class="field-label">위치</span>
+            <span class="field-label"><span class="sn">4</span>위치 <em>그 자리에서 "현재 위치"</em></span>
             <div class="loc">
               <code id="f-loc">35.14720, 126.92080</code>
               <button class="btn btn-sm" type="button" id="pickBtn"><svg class="ic" viewBox="0 0 24 24" data-i="target"></svg>지도에서 고르기</button>
@@ -650,7 +688,7 @@ svg.leaflet-zoom-animated{will-change:transform}
             </div>
           </div>
           <p class="err" id="f-err" hidden></p>
-          <button class="btn btn-c btn-block" type="submit"><svg class="ic" viewBox="0 0 24 24" data-i="plus"></svg>지도에 핀 추가</button>
+          <button class="btn btn-c btn-block" type="submit"><span class="sn">5</span>지도에 핀 추가</button>
         </form>
         <div style="text-align:center"><button class="reset" type="button" id="resetPins">샘플 데이터로 되돌리기</button></div>
       </aside>
@@ -663,6 +701,14 @@ svg.leaflet-zoom-animated{will-change:transform}
       <span class="eyebrow">Track D · 감성 분석 대시보드</span>
       <h1 id="echo-title">오월의 메아리<small>Echo of May</small></h1>
       <p>구전남도청 방문객의 추모·평화 메시지를 모아 감정을 분석하는 아카이브입니다. 메시지를 남기면 모든 지표가 바로 다시 계산돼요.</p>
+    </div>
+
+    <div class="guide" style="margin-bottom:14px">
+      <div class="guide-head"><svg class="ic" viewBox="0 0 24 24" data-i="route"></svg>이 화면에서 할 일 2가지</div>
+      <ol class="guide-steps">
+        <li><span class="sn lg d">A</span><p>소감 남기기<small><span class="sn">1</span>닉네임·세대 → <span class="sn">2</span>소감 한 문장 → <span class="sn">3</span>감성 분석 실행</small></p><button class="btn btn-d" type="button" data-go="echo|#msgForm|#m-name">쓰러 가기</button></li>
+        <li><span class="sn lg d">B</span><p>현장 조사 기록<small>의견·후기를 어떻게 받는지 찾아 기록</small></p><button class="btn btn-d" type="button" data-go="echo|#surveyCard|#sv-where">기록하러 가기</button></li>
+      </ol>
     </div>
 
     <div class="kpis">
@@ -709,13 +755,13 @@ svg.leaflet-zoom-animated{will-change:transform}
     </div>
 
     <div class="d-grid">
-      <form class="card form-stack" id="msgForm" novalidate>
+      <form class="card form-stack" id="msgForm" novalidate style="scroll-margin-top:72px">
         <div class="card-head" style="margin-bottom:0"><div><h3>현장 메시지 남기기</h3><div class="sub">답사에서 느낀 점을 한 줄로 남겨 주세요</div></div></div>
-        <label class="field"><span>닉네임<em>공개될 수 있어요 · 실명 대신 별명</em></span><input id="m-name" placeholder="예: 빛고을 고1" maxlength="16"></label>
-        <div class="field"><span class="field-label" id="m-gen-label">세대 구분</span><div class="radio-chips" id="m-gen" role="radiogroup" aria-labelledby="m-gen-label"></div></div>
-        <label class="field"><span>방문 소감</span><textarea id="m-text" rows="3" maxlength="300" placeholder="예: 도청 앞에서 시민들의 용기를 기억하겠다고 다짐했습니다."></textarea></label>
+        <label class="field"><span><span class="sn">1</span>닉네임<em>실명 대신 별명</em></span><input id="m-name" placeholder="예: 빛고을 고1" maxlength="16"></label>
+        <div class="field"><span class="field-label" id="m-gen-label"><span class="sn">1</span>세대</span><div class="radio-chips" id="m-gen" role="radiogroup" aria-labelledby="m-gen-label"></div></div>
+        <label class="field"><span><span class="sn">2</span>방문 소감</span><textarea id="m-text" rows="3" maxlength="300" placeholder="예: 도청 앞에서 시민들의 용기를 기억하겠다고 다짐했습니다."></textarea></label>
         <p class="err" id="m-err" hidden></p>
-        <button class="btn btn-d btn-block" type="submit"><svg class="ic" viewBox="0 0 24 24" data-i="sparkle"></svg>자연어 감성 분석 실행</button>
+        <button class="btn btn-d btn-block" type="submit"><span class="sn">3</span>자연어 감성 분석 실행</button>
         <div id="anaOut"></div>
       </form>
 
@@ -731,16 +777,16 @@ svg.leaflet-zoom-animated{will-change:transform}
       </div>
     </div>
 
-    <div class="card" id="surveyCard" style="margin-top:12px">
+    <div class="card" id="surveyCard" style="margin-top:12px;scroll-margin-top:72px">
       <div class="card-head"><div><h3>현장 조사: 의견은 어떻게 모을까?</h3><div class="sub">구전남도청은 체험자·관광객의 의견과 후기를 어떻게 받고 있는지 찾아 기록해요</div></div><span class="tag" style="background:var(--d-soft);color:var(--d)">답사 과제</span></div>
       <div class="d-grid" style="margin-top:0">
         <form class="form-stack" id="surveyForm" novalidate>
-          <div class="field"><span class="field-label" id="sv-way-label">찾은 방법 <em>여러 개 선택</em></span><div class="radio-chips" id="sv-ways" role="group" aria-labelledby="sv-way-label"></div></div>
-          <label class="field"><span>어디서 봤나요?</span><input id="sv-where" placeholder="예: 본관 1층 안내데스크 옆" maxlength="60"></label>
-          <label class="field"><span>관찰 메모</span><textarea id="sv-note" rows="3" maxlength="400" placeholder="무엇을 묻는지, 누가 쓰고 읽을 수 있는지, 쓰기 불편한 점, 직원에게 들은 답 등"></textarea></label>
-          <label class="field"><span>개선 아이디어</span><input id="sv-idea" placeholder="예: 출구에 QR 후기 코너를 두면 좋겠다" maxlength="120"></label>
+          <div class="field"><span class="field-label" id="sv-way-label"><span class="sn">1</span>찾은 방법 <em>여러 개 선택</em></span><div class="radio-chips" id="sv-ways" role="group" aria-labelledby="sv-way-label"></div></div>
+          <label class="field"><span><span class="sn">2</span>어디서 봤나요?</span><input id="sv-where" placeholder="예: 본관 1층 안내데스크 옆" maxlength="60"></label>
+          <label class="field"><span><span class="sn">3</span>관찰 메모</span><textarea id="sv-note" rows="3" maxlength="400" placeholder="무엇을 묻는지, 누가 쓰고 읽을 수 있는지, 쓰기 불편한 점, 직원에게 들은 답 등"></textarea></label>
+          <label class="field"><span>개선 아이디어<span class="opt">선택</span></span><input id="sv-idea" placeholder="예: 출구에 QR 후기 코너를 두면 좋겠다" maxlength="120"></label>
           <div class="field">
-            <span class="field-label">사진</span>
+            <span class="field-label"><span class="sn">4</span>사진<span class="opt">선택</span></span>
             <div class="photo-row">
               <label class="photo-prev" id="sv-photo-prev" for="sv-photo" title="사진 선택"><svg class="ic" viewBox="0 0 24 24" data-i="camera"></svg></label>
               <input id="sv-photo" type="file" accept="image/*" hidden>
@@ -748,7 +794,7 @@ svg.leaflet-zoom-animated{will-change:transform}
             </div>
           </div>
           <p class="err" id="sv-err" hidden></p>
-          <button class="btn btn-d btn-block" type="submit"><svg class="ic" viewBox="0 0 24 24" data-i="plus"></svg>조사 기록 저장</button>
+          <button class="btn btn-d btn-block" type="submit"><span class="sn">5</span>조사 기록 저장</button>
         </form>
         <div>
           <div class="field-label" style="margin-bottom:8px">내 조사 기록</div>
@@ -1966,6 +2012,21 @@ async function submitAll(silent) {
 $('#sync-btn').addEventListener('click', () => submitAll(false));
 addEventListener('online', () => submitAll(true));
 document.addEventListener('visibilitychange', () => { if (!document.hidden) submitAll(true); });
+
+/* 안내 바로가기: data-go="화면|강조할 영역|커서를 둘 칸" */
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-go]'); if (!b) return;
+  const [view, sel, focusSel] = b.dataset.go.split('|');
+  const jump = () => {
+    const el = $(sel); if (!el) return;
+    el.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+    el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
+    setTimeout(() => { const f = $(focusSel); if (f) f.focus({ preventScroll: true }); }, reduceMotion ? 0 : 600);
+  };
+  const cur = location.hash.replace('#', '') || 'home';
+  if (cur !== view) { location.hash = view; setTimeout(jump, 350); }
+  else jump();
+});
 
 /* 시작 */
 renderChecklist();
