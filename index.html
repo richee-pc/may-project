@@ -23,7 +23,7 @@
   --hero:#1B2747; --hero-ink:#F6F2E6; --hero-sub:#B9C2DC; --hero-gold:#E3B55B;
   --p-green:#2C9657; --p-blue:#2F68CC; --p-orange:#DD6F1B; --p-yellow:#C99604; --p-violet:#8550C4; --danger:#CF4136;
   --e1:#34478E; --e2:#C4433A; --e3:#AE8216; --e4:#2B8A63; --e5:#7A5BC8;
-  --map-bg:#E6E9E1; --sch-road:#FFFFFF; --sch-bld:#CBD2C4; --sch-plaza:#DCE3D3; --sch-water:#A6C6DD; --sch-acc:#C6D8BD; --sch-label:#56615B;
+  --tile-filter:saturate(.7) contrast(.96); --map-bg:#E6E9E1; --sch-road:#FFFFFF; --sch-bld:#CBD2C4; --sch-plaza:#DCE3D3; --sch-water:#A6C6DD; --sch-acc:#C6D8BD; --sch-label:#56615B;
   --shadow:0 1px 2px rgba(22,30,26,.06),0 10px 28px rgba(22,30,26,.08);
   --f-display:'Hahmlet','Nanum Myeongjo','AppleMyungjo',serif;
   --f-body:'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif;
@@ -38,7 +38,7 @@
   --hero:#161F3A; --hero-ink:#F6F2E6; --hero-sub:#A8B2D0; --hero-gold:#E8BD62;
   --p-green:#3FB873; --p-blue:#5B8DF0; --p-orange:#F08A3A; --p-yellow:#E2B01E; --p-violet:#A57BE6; --danger:#F06A5E;
   --e1:#8396E4; --e2:#EE7268; --e3:#E2B44A; --e4:#4FBF92; --e5:#B097F3;
-  --map-bg:#131917; --sch-road:#2A332F; --sch-bld:#36413B; --sch-plaza:#202925; --sch-water:#284459; --sch-acc:#1D3127; --sch-label:#9AA59F;
+  --tile-filter:invert(1) hue-rotate(180deg) brightness(.92) contrast(.88) saturate(.55); --map-bg:#131917; --sch-road:#2A332F; --sch-bld:#36413B; --sch-plaza:#202925; --sch-water:#284459; --sch-acc:#1D3127; --sch-label:#9AA59F;
   --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 28px rgba(0,0,0,.4);
   color-scheme:dark;
 }}
@@ -51,7 +51,7 @@
   --hero:#161F3A; --hero-ink:#F6F2E6; --hero-sub:#A8B2D0; --hero-gold:#E8BD62;
   --p-green:#3FB873; --p-blue:#5B8DF0; --p-orange:#F08A3A; --p-yellow:#E2B01E; --p-violet:#A57BE6; --danger:#F06A5E;
   --e1:#8396E4; --e2:#EE7268; --e3:#E2B44A; --e4:#4FBF92; --e5:#B097F3;
-  --map-bg:#131917; --sch-road:#2A332F; --sch-bld:#36413B; --sch-plaza:#202925; --sch-water:#284459; --sch-acc:#1D3127; --sch-label:#9AA59F;
+  --tile-filter:invert(1) hue-rotate(180deg) brightness(.92) contrast(.88) saturate(.55); --map-bg:#131917; --sch-road:#2A332F; --sch-bld:#36413B; --sch-plaza:#202925; --sch-water:#284459; --sch-acc:#1D3127; --sch-label:#9AA59F;
   --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 28px rgba(0,0,0,.4);
   color-scheme:dark;
 }
@@ -326,6 +326,7 @@ svg.leaflet-zoom-animated{will-change:transform}
 .leaflet-popup-tip{width:17px;height:17px;padding:1px;margin:-10px auto 0;transform:rotate(45deg);background:var(--surface);border:1px solid var(--line)}
 .leaflet-container a.leaflet-popup-close-button{position:absolute;top:16px;right:16px;z-index:2;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font:18px/1 var(--f-body);color:#fff;background:rgba(10,14,12,.45);text-decoration:none}
 .leaflet-container a.leaflet-popup-close-button span{line-height:1;margin-top:-2px}
+.osm-tiles{filter:var(--tile-filter)}
 .pin-wrap{background:none;border:0}
 .pin{width:36px;height:36px;border-radius:50% 50% 50% 4px;transform:rotate(-45deg);background:var(--pc);border:3px solid var(--surface);box-shadow:0 4px 12px rgba(0,0,0,.28);display:grid;place-items:center;transition:transform .2s}
 .pin svg{width:17px;height:17px;transform:rotate(45deg);fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
@@ -1102,9 +1103,10 @@ function setFilter(f) {
 function setTiles() {
   if (!map) return;
   if (tileLayer) map.removeLayer(tileLayer);
-  const style = isDark() ? 'dark_all' : 'light_all';
-  tileLayer = L.tileLayer(`https://{s}.basemaps.cartocdn.com/${style}/{z}/{x}/{y}{r}.png`, {
-    subdomains: 'abcd', maxZoom: 20, attribution: '&copy; OpenStreetMap &copy; CARTO'
+  // OpenStreetMap 기본 지도: API 키 없이 쓸 수 있고 한글 지명이 나옵니다. 다크 모드에서는 CSS 필터로 어둡게 바꿔요.
+  tileLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19, className: 'osm-tiles',
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>'
   });
   let loaded = 0;
   showSchematic(true);
