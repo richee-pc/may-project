@@ -118,7 +118,7 @@ main{padding-bottom:calc(92px + env(safe-area-inset-bottom,0px))}
 .field{display:flex;flex-direction:column;gap:6px;min-width:0}
 .field>span,.field-label{font-size:13px;font-weight:600;color:var(--ink-2)}
 .field em{font-style:normal;font-family:var(--f-mono);font-size:11.5px;color:var(--ink-3);margin-left:4px}
-.input,.field input:not([type=radio]):not([type=file]),.field textarea,.field select{width:100%;font-size:16px;padding:11px 13px;border:1px solid var(--line);border-radius:13px;background:var(--bg);color:var(--ink);outline:none;transition:border-color .2s,box-shadow .2s}
+.input,.field input:not([type=radio]):not([type=checkbox]):not([type=file]),.field textarea,.field select{width:100%;font-size:16px;padding:11px 13px;border:1px solid var(--line);border-radius:13px;background:var(--bg);color:var(--ink);outline:none;transition:border-color .2s,box-shadow .2s}
 .field textarea{resize:vertical;min-height:84px;line-height:1.55}
 .input:focus,.field input:focus,.field textarea:focus{border-color:var(--ink-3);box-shadow:0 0 0 3px color-mix(in srgb,var(--ink-3) 18%,transparent)}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -721,6 +721,32 @@ svg.leaflet-zoom-animated{will-change:transform}
       </div>
     </div>
 
+    <div class="card" id="surveyCard" style="margin-top:12px">
+      <div class="card-head"><div><h3>현장 조사: 의견은 어떻게 모을까?</h3><div class="sub">구전남도청은 체험자·관광객의 의견과 후기를 어떻게 받고 있는지 찾아 기록해요</div></div><span class="tag" style="background:var(--d-soft);color:var(--d)">답사 과제</span></div>
+      <div class="d-grid" style="margin-top:0">
+        <form class="form-stack" id="surveyForm" novalidate>
+          <div class="field"><span class="field-label" id="sv-way-label">찾은 방법 <em>여러 개 선택</em></span><div class="radio-chips" id="sv-ways" role="group" aria-labelledby="sv-way-label"></div></div>
+          <label class="field"><span>어디서 봤나요?</span><input id="sv-where" placeholder="예: 본관 1층 안내데스크 옆" maxlength="60"></label>
+          <label class="field"><span>관찰 메모</span><textarea id="sv-note" rows="3" maxlength="400" placeholder="무엇을 묻는지, 누가 쓰고 읽을 수 있는지, 쓰기 불편한 점, 직원에게 들은 답 등"></textarea></label>
+          <label class="field"><span>개선 아이디어</span><input id="sv-idea" placeholder="예: 출구에 QR 후기 코너를 두면 좋겠다" maxlength="120"></label>
+          <div class="field">
+            <span class="field-label">사진</span>
+            <div class="photo-row">
+              <label class="photo-prev" id="sv-photo-prev" for="sv-photo" title="사진 선택"><svg class="ic" viewBox="0 0 24 24" data-i="camera"></svg></label>
+              <input id="sv-photo" type="file" accept="image/*" hidden>
+              <span class="muted" style="font-size:12.5px">방명록·설문 안내문·의견함을 찍어 두세요 (사람 얼굴 제외)</span>
+            </div>
+          </div>
+          <p class="err" id="sv-err" hidden></p>
+          <button class="btn btn-d btn-block" type="submit"><svg class="ic" viewBox="0 0 24 24" data-i="plus"></svg>조사 기록 저장</button>
+        </form>
+        <div>
+          <div class="field-label" style="margin-bottom:8px">내 조사 기록</div>
+          <div class="places" id="surveyList"></div>
+        </div>
+      </div>
+    </div>
+
     <div class="card lab" style="margin-top:12px">
       <div class="card-head"><div><h3>세대별 오월 정신 인식 비교</h3><div class="sub">지금은 세대별 메시지 수만 셉니다. 감정 점수를 교차해 차트로 만들어 보세요.</div></div><span class="tag tag-todo">TODO 3</span></div>
       <div class="xt-wrap"><table class="xt" id="xtab"></table></div>
@@ -920,6 +946,7 @@ const CHECKS = [
   '계단 높이, 우회 경사로 폭, 장애인 화장실 위치 기록하기',
   '현장 방명록·메모판 사진 찍기',
   '오월의 메아리에 내 소감 한 문장 남기기',
+  '의견·후기를 받는 방법을 찾아 현장 조사에 기록하기',
   '홈에서 제출 대기 0건인지 확인하기'
 ];
 function renderChecklist() {
@@ -1505,6 +1532,10 @@ const seedMsgs = () => SAMPLE_MSGS.map(([nick, gen, text, h], i) => ({ id: 'm' +
 let msgs = store.get('may.msgs.v1', null) || seedMsgs();
 let lastAnalysis = null;
 let activeWord = null;
+const SURVEY_WAYS = ['방명록·메모판', 'QR·온라인 설문', '안내데스크·해설사', '의견함(종이)', '키오스크·화면', '홈페이지·SNS 안내', '찾지 못함', '기타'];
+let surveys = store.get('may.surveys.v1', []);
+let svPhoto = '';
+const saveSurveys = () => { if (!store.set('may.surveys.v1', surveys)) toast('저장 공간이 부족해 이 기기에 저장하지 못했어요'); };
 const saveMsgs = () => { if (!store.set('may.msgs.v1', msgs)) toast('저장 공간이 부족해 이 기기에 저장하지 못했어요'); };
 
 const countOcc = (text, term) => { let n = 0, i = 0; while ((i = text.indexOf(term, i)) !== -1) { n++; i += term.length; } return n; };
@@ -1759,6 +1790,45 @@ $('#resetMsgs').addEventListener('click', e => armButton(e.currentTarget, '한 �
   msgs = seedMsgs(); lastAnalysis = null; activeWord = null; saveMsgs(); $('#anaOut').innerHTML = ''; renderEcho(); toast('샘플 메시지로 되돌렸어요');
 }));
 
+/* ---------- 현장 조사: 의견·후기 수렴 방법 ---------- */
+$('#sv-ways').innerHTML = SURVEY_WAYS.map((w, i) => `<label><input type="checkbox" name="svway" id="svway-${i}" value="${w}"><span>${w}</span></label>`).join('');
+function renderSurveys() {
+  const list = surveys.slice().sort((a, b) => b.at - a.at);
+  $('#surveyList').innerHTML = list.length ? list.map(v => `<div class="place" style="grid-template-columns:52px minmax(0,1fr) auto">
+      ${v.photo ? `<img src="${esc(v.photo)}" alt="">` : `<span class="photo-prev" style="width:52px;height:52px">${icon('search')}</span>`}
+      <div class="place-main" style="cursor:default"><b>${esc(v.ways.join(' · ') || '방법 미선택')}</b><span>${v.sent ? '<span class="user-tag">제출 완료</span>' : '<span class="user-tag wait">제출 대기</span>'}${esc(v.where || '위치 미기록')}</span></div>
+      <div class="place-side"><button class="place-del" type="button" data-sdel="${v.id}">${icon('trash')}삭제</button></div>
+    </div>`).join('') : '<div class="empty">아직 기록이 없어요.<br>방명록, 설문 QR, 의견함, 안내데스크를 찾아보세요.</div>';
+}
+$('#sv-photo').addEventListener('change', async e => {
+  const f = e.target.files[0]; if (!f) return;
+  try { svPhoto = await shrinkImage(f); $('#sv-photo-prev').innerHTML = `<img src="${svPhoto}" alt="선택한 사진" style="width:56px;height:56px;border-radius:12px;object-fit:cover">`; }
+  catch (err) { toast('사진을 읽지 못했어요. 다른 사진을 골라 주세요'); }
+});
+$('#surveyForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const ways = $$('input[name="svway"]:checked').map(c => c.value);
+  const note = $('#sv-note').value.trim();
+  const err = $('#sv-err');
+  if (!ways.length) { err.textContent = '찾은 방법을 하나 이상 골라 주세요. 못 찾았다면 "찾지 못함"을 골라요.'; err.hidden = false; return; }
+  if (note.length < 5) { err.textContent = '관찰 메모를 다섯 글자 이상 적어 주세요.'; err.hidden = false; $('#sv-note').focus(); return; }
+  err.hidden = true;
+  surveys.push({ id: 's' + Date.now().toString(36), ways, where: $('#sv-where').value.trim(), note, idea: $('#sv-idea').value.trim(), photo: svPhoto, at: Date.now() });
+  saveSurveys();
+  $('#surveyForm').reset(); svPhoto = ''; $('#sv-photo-prev').innerHTML = icon('camera');
+  renderSurveys(); renderSync(); submitAll(true);
+  toast('조사 기록을 저장했어요');
+});
+$('#surveyList').addEventListener('click', e => {
+  const del = e.target.closest('[data-sdel]'); if (!del) return;
+  armButton(del, '한 번 더 누르면 삭제', () => {
+    const gone = surveys.find(v => v.id === del.dataset.sdel);
+    surveys = surveys.filter(v => v.id !== del.dataset.sdel); saveSurveys(); renderSurveys(); renderSync();
+    toast(gone && gone.sent ? '이 휴대폰에서 삭제했어요. 이미 제출된 기록은 선생님께 삭제를 요청하세요' : '조사 기록을 삭제했어요');
+  });
+});
+renderSurveys();
+
 /* 데이터 내보내기 (CSV / JSON) */
 let exportFmt = 'csv';
 function exportRows() {
@@ -1826,7 +1896,8 @@ let syncCfg = Object.assign({ code: '', name: '' }, store.get('may.sync', {}));
 let syncing = false;
 const pendingItems = () => [
   ...pins.filter(p => p.user && !p.sent).map(item => ({ kind: 'pin', item })),
-  ...msgs.filter(m => m.user && !m.sent).map(item => ({ kind: 'msg', item }))
+  ...msgs.filter(m => m.user && !m.sent).map(item => ({ kind: 'msg', item })),
+  ...surveys.filter(v => !v.sent).map(item => ({ kind: 'survey', item }))
 ];
 function renderSync() {
   const waitN = pendingItems().length;
@@ -1834,7 +1905,7 @@ function renderSync() {
   const chip = $('#topSync');
   chip.textContent = waitN ? `제출 대기 ${waitN}` : '베이스라인 v1.0';
   chip.classList.toggle('wait', waitN > 0);
-  $('#sync-done').textContent = pins.filter(p => p.user && p.sent).length + msgs.filter(m => m.user && m.sent).length;
+  $('#sync-done').textContent = pins.filter(p => p.user && p.sent).length + msgs.filter(m => m.user && m.sent).length + surveys.filter(v => v.sent).length;
   const note = $('#sync-note');
   let msg = '', warn = false;
   if (inArtifactView) { msg = 'claude.ai 미리보기에서는 제출할 수 없어요. 선생님이 알려 준 학생용 주소에서 제출해 주세요.'; warn = true; }
@@ -1869,9 +1940,9 @@ async function submitAll(silent) {
       else { fail++; err = j.error || 'server'; if (err === 'bad_code') break; }
     } catch (e) { fail++; err = 'network'; break; }
   }
-  savePins(); saveMsgs();
+  savePins(); saveMsgs(); saveSurveys();
   syncing = false;
-  renderSync(); renderPlaces(); renderFeed();
+  renderSync(); renderPlaces(); renderFeed(); renderSurveys();
   if (!fail && pendingItems().length) setTimeout(() => submitAll(true), 300);
   if (err === 'bad_code') toast('반 코드가 맞지 않아요. 선생님께 확인해 주세요');
   else if (fail) { if (!silent || ok) toast(`${ok}건 제출, 나머지는 인터넷이 연결되면 다시 보낼게요`); }

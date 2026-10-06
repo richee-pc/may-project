@@ -1,8 +1,8 @@
 /**
  * 오월 프로젝트 · 학생 제출 수신용 Google Apps Script
  *
- * 학생 웹앱에서 보낸 핀(Track C)과 소감(Track D)을
- *   - 이 스프레드시트의 '핀', '메시지' 시트에 한 줄씩 기록하고
+ * 학생 웹앱에서 보낸 핀(Track C), 소감(Track D), 현장 조사(의견 수렴 방법)를
+ *   - 이 스프레드시트의 '핀', '메시지', '조사' 시트에 한 줄씩 기록하고
  *   - 현장 사진은 Drive 의 '오월 프로젝트 현장 사진' 폴더에 저장합니다.
  *
  * 설정 방법은 저장소의 README.md 를 따라 하세요.
@@ -13,12 +13,14 @@ const CLASS_CODE = '0518';
 
 const PIN_HEAD = ['받은 시각', '제출자', 'id', '장소명', '유형', '위도', '경도', '단차(cm)', '폭(cm)', '설명', '사진 링크', '검수'];
 const MSG_HEAD = ['받은 시각', '제출자', 'id', '닉네임', '세대', '소감', '작성 시각', '검수'];
+const SURVEY_HEAD = ['받은 시각', '제출자', 'id', '찾은 방법', '위치', '관찰 메모', '개선 아이디어', '사진 링크', '기록 시각', '검수'];
 
 /** 처음 한 번 실행: 시트와 사진 폴더를 만들고 권한을 허용합니다. */
 function setup() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   getSheet_(ss, '핀', PIN_HEAD);
   getSheet_(ss, '메시지', MSG_HEAD);
+  getSheet_(ss, '조사', SURVEY_HEAD);
   const f = getFolder_();
   Logger.log('준비 완료. 사진 폴더: ' + f.getUrl());
 }
@@ -51,6 +53,14 @@ function doPost(e) {
       const sh = getSheet_(ss, '메시지', MSG_HEAD);
       if (exists_(sh, it.id)) return json_({ ok: true, dup: true });
       sh.appendRow([now, team, it.id, clean_(it.nick), clean_(it.gen), clean_(it.text), new Date(it.at || Date.now()), '']);
+      return json_({ ok: true });
+    }
+    if (body.kind === 'survey') {
+      const sh = getSheet_(ss, '조사', SURVEY_HEAD);
+      if (exists_(sh, it.id)) return json_({ ok: true, dup: true });
+      const ways = Array.isArray(it.ways) ? it.ways.map(clean_).join(', ') : clean_(it.ways);
+      sh.appendRow([now, team, it.id, ways, clean_(it.where), clean_(it.note), clean_(it.idea),
+        savePhoto_(it.photo, team, it.id), new Date(it.at || Date.now()), '']);
       return json_({ ok: true });
     }
     return json_({ ok: false, error: 'bad_kind' });
