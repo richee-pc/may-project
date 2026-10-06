@@ -515,9 +515,12 @@ svg.leaflet-zoom-animated{will-change:transform}
 
     <div class="sec">
       <div class="card">
-        <div class="card-head"><div><h3>선생님께 제출</h3><div class="sub">입력한 핀과 소감을 동아리 공용 Google 시트로 보냅니다</div></div><svg class="ic" viewBox="0 0 24 24" data-i="upload" style="color:var(--gold);width:22px;height:22px"></svg></div>
+        <div class="card-head"><div><h3>선생님께 제출</h3><div class="sub">입력한 핀과 소감을 선생님 Google 시트로 보냅니다. 이름은 선생님만 볼 수 있어요</div></div><svg class="ic" viewBox="0 0 24 24" data-i="upload" style="color:var(--gold);width:22px;height:22px"></svg></div>
         <div class="sync">
-          <label class="field"><span>반 코드</span><input id="sync-code" placeholder="선생님이 알려 준 코드" autocomplete="off" inputmode="numeric" maxlength="20"></label>
+          <div class="row2">
+            <label class="field"><span>반 코드</span><input id="sync-code" placeholder="선생님이 알려 준 코드" autocomplete="off" inputmode="numeric" maxlength="20"></label>
+            <label class="field"><span>이름</span><input id="sync-name" placeholder="예: 김오월" autocomplete="name" maxlength="20"></label>
+          </div>
           <div class="sync-status">
             <div class="sync-nums"><span><b id="sync-wait">0</b>제출 대기</span><span><b id="sync-done">0</b>제출 완료</span></div>
             <span style="flex:1"></span>
@@ -537,12 +540,12 @@ svg.leaflet-zoom-animated{will-change:transform}
       <div class="card">
         <div class="card-head"><div><h3>학생 실습 과제</h3><div class="sub">코드 속 [TODO for Students] 주석을 찾아 채워 보세요</div></div><svg class="ic" viewBox="0 0 24 24" data-i="book" style="color:var(--gold);width:22px;height:22px"></svg></div>
         <div class="todos">
-          <div class="todo"><code class="k-c">C · 1</code><b>실측 데이터로 교체</b><p>답사에서 잰 GPS 좌표와 단차(cm)로 샘플 핀을 바꿉니다.</p></div>
-          <div class="todo"><code class="k-c">C · 2</code><b>무계단 우회 경로</b><p>다익스트라 또는 A* 알고리즘으로 계단 없는 길을 지도에 선으로 그립니다.</p></div>
-          <div class="todo"><code class="k-c">C · 3</code><b>Gemini Vision 연동</b><p>찍은 안내판 사진의 글자를 실제 AI로 인식해 도슨트가 읽게 합니다.</p></div>
-          <div class="todo"><code class="k-d">D · 1</code><b>불용어 정제 함수</b><p>형태소 분석을 흉내 내 조사(의, 가, 을, 를)를 걸러 냅니다.</p></div>
-          <div class="todo"><code class="k-d">D · 2</code><b>AI 감성 분류로 교체</b><p>규칙 기반 감성 사전을 Hugging Face나 Gemini Text API로 바꿉니다.</p></div>
-          <div class="todo"><code class="k-d">D · 3</code><b>세대별 크로스탭</b><p>청소년과 중장년의 오월 정신 인식 차이를 차트로 비교합니다.</p></div>
+          <div class="todo"><code class="k-all">과제 1</code><b>실측 데이터로 교체 · 오월의 길</b><p>답사에서 잰 GPS 좌표와 단차(cm)로 샘플 핀을 바꿉니다.</p></div>
+          <div class="todo"><code class="k-all">과제 2</code><b>무계단 우회 경로 · 오월의 길</b><p>다익스트라 또는 A* 알고리즘으로 계단 없는 길을 지도에 선으로 그립니다.</p></div>
+          <div class="todo"><code class="k-all">과제 3</code><b>Gemini Vision 연동 · 오월의 길</b><p>찍은 안내판 사진의 글자를 실제 AI로 인식해 도슨트가 읽게 합니다.</p></div>
+          <div class="todo"><code class="k-all">과제 4</code><b>불용어 정제 함수 · 오월의 메아리</b><p>형태소 분석을 흉내 내 조사(의, 가, 을, 를)를 걸러 냅니다.</p></div>
+          <div class="todo"><code class="k-all">과제 5</code><b>AI 감성 분류로 교체 · 오월의 메아리</b><p>규칙 기반 감성 사전을 Hugging Face나 Gemini Text API로 바꿉니다.</p></div>
+          <div class="todo"><code class="k-all">과제 6</code><b>세대별 크로스탭 · 오월의 메아리</b><p>청소년과 중장년의 오월 정신 인식 차이를 차트로 비교합니다.</p></div>
         </div>
       </div>
     </div>
@@ -909,23 +912,24 @@ const petals = (() => {
 
 /* 답사 체크리스트 */
 const CHECKS = [
-  ['all', '스마트폰 카메라의 위치 정보(GPS 태그) 켜기'],
-  ['c', '본관·별관 출입로 경사로 사진 찍고 단차를 cm 단위로 재기'],
-  ['c', '계단 높이, 우회 경사로 폭, 장애인 화장실 위치 기록하기'],
-  ['d', '현장 방명록·메모판 사진 촬영하기'],
-  ['d', '내 소감을 한 문장으로 적어 두기'],
-  ['all', '답사 후 이 앱의 입력 폼에 데이터 등록하기']
+  '홈의 제출 칸에 반 코드와 이름 입력하기',
+  '스마트폰 위치 권한(GPS) 켜기',
+  '본관·별관 출입로 경사로 사진 찍고 단차를 줄자로 재기(cm)',
+  '계단 높이, 우회 경사로 폭, 장애인 화장실 위치 기록하기',
+  '현장 방명록·메모판 사진 찍기',
+  '오월의 메아리에 내 소감 한 문장 남기기',
+  '홈에서 제출 대기 0건인지 확인하기'
 ];
 function renderChecklist() {
-  const done = store.get('may.checks', []);
-  $('#checklist').innerHTML = CHECKS.map(([k, t], i) => `<li><label><input type="checkbox" id="ck-${i}" ${done.includes(i) ? 'checked' : ''}><span class="cbox">${icon('check')}</span><span class="ck-text"><small class="k-${k}">${k === 'all' ? '공통' : k === 'c' ? 'C조' : 'D조'}</small>${esc(t)}</span></label></li>`).join('');
+  const done = store.get('may.checks.v2', []);
+  $('#checklist').innerHTML = CHECKS.map((t, i) => `<li><label><input type="checkbox" id="ck-${i}" ${done.includes(i) ? 'checked' : ''}><span class="cbox">${icon('check')}</span><span class="ck-text">${esc(t)}</span></label></li>`).join('');
   const n = done.length;
   $('#ck-count').textContent = `${n} / ${CHECKS.length} 완료`;
   $('#ck-bar').style.width = (n / CHECKS.length * 100) + '%';
 }
 $('#checklist').addEventListener('change', e => {
   const done = $$('#checklist input').map((c, i) => c.checked ? i : -1).filter(i => i >= 0);
-  store.set('may.checks', done); renderChecklist();
+  store.set('may.checks.v2', done); renderChecklist();
 });
 
 /* =====================================================================
@@ -1796,7 +1800,7 @@ new MutationObserver(onTheme).observe(document.documentElement, { attributes: tr
 // 선생님이 apps-script/Code.gs 를 '웹 앱'으로 배포한 뒤 받은 주소(https://script.google.com/macros/s/…/exec)를 붙여 넣으세요.
 const SUBMIT_URL = 'https://script.google.com/macros/s/AKfycbxh6WgH9ON5oEUJKdcXa00XQNjmlMJouIU7y1_7zL3NRXv_Cd9k1SGC42oilnT5GHa7/exec';
 const inArtifactView = !!(window.claude && window.claude.use);
-let syncCfg = store.get('may.sync', { code: '', team: '' });
+let syncCfg = Object.assign({ code: '', name: '' }, store.get('may.sync', {}));
 let syncing = false;
 const pendingItems = () => [
   ...pins.filter(p => p.user && !p.sent).map(item => ({ kind: 'pin', item })),
@@ -1809,7 +1813,7 @@ function renderSync() {
   let msg = '', warn = false;
   if (inArtifactView) { msg = 'claude.ai 미리보기에서는 제출할 수 없어요. 선생님이 알려 준 학생용 주소에서 제출해 주세요.'; warn = true; }
   else if (!SUBMIT_URL) { msg = '아직 제출 주소가 설정되지 않았어요. 입력한 기록은 이 휴대폰에 안전하게 보관되고, 설정이 끝나면 한 번에 보낼 수 있어요.'; warn = true; }
-  else if (!syncCfg.code) msg = '반 코드를 넣으면 기록을 추가할 때마다 자동으로 제출돼요.';
+  else if (!syncCfg.code || !syncCfg.name) msg = '반 코드와 이름을 넣으면 기록을 추가할 때마다 자동으로 제출돼요.';
   else msg = '인터넷이 끊겨도 기록은 휴대폰에 남아 있다가, 다시 연결되면 자동으로 제출돼요.';
   note.textContent = msg; note.hidden = !msg; note.classList.toggle('warn', warn);
   $('#sync-btn').disabled = syncing;
@@ -1819,8 +1823,8 @@ async function submitAll(silent) {
   const list = pendingItems();
   if (!list.length) { if (!silent) toast('새로 보낼 기록이 없어요'); renderSync(); return; }
   if (inArtifactView || !SUBMIT_URL) { if (!silent) toast('지금 화면에서는 제출할 수 없어요. 기록은 이 휴대폰에 보관돼요'); return; }
-  if (!syncCfg.code) {
-    if (!silent) { toast('반 코드를 먼저 입력해 주세요'); location.hash = 'home'; setTimeout(() => $('#sync-code').focus(), 300); }
+  if (!syncCfg.code || !syncCfg.name) {
+    if (!silent) { toast('반 코드와 이름을 먼저 입력해 주세요'); location.hash = 'home'; setTimeout(() => $('#sync-code').focus(), 300); }
     return;
   }
   if (syncing) return;
@@ -1832,7 +1836,7 @@ async function submitAll(silent) {
       const res = await fetch(SUBMIT_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },   // 단순 요청으로 보내 CORS 사전 요청을 피해요
-        body: JSON.stringify({ code: syncCfg.code, kind, item: data })
+        body: JSON.stringify({ code: syncCfg.code, team: syncCfg.name, kind, item: data })   // 시트의 두 번째 열(제출자)에 이름이 들어가요
       });
       const j = await res.json();
       if (j.ok) { item.sent = true; ok++; }
@@ -1846,7 +1850,7 @@ async function submitAll(silent) {
   else if (fail) { if (!silent || ok) toast(`${ok}건 제출, 나머지는 인터넷이 연결되면 다시 보낼게요`); }
   else toast(`${ok}건을 선생님께 제출했어요`);
 }
-['code'].forEach(k => {
+['code', 'name'].forEach(k => {
   const el = $('#sync-' + k);
   el.value = syncCfg[k] || '';
   el.addEventListener('change', () => { syncCfg[k] = el.value.trim(); store.set('may.sync', syncCfg); renderSync(); submitAll(true); });
