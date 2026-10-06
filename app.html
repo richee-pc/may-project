@@ -516,10 +516,7 @@ svg.leaflet-zoom-animated{will-change:transform}
       <div class="card">
         <div class="card-head"><div><h3>선생님께 제출</h3><div class="sub">입력한 핀과 소감을 동아리 공용 Google 시트로 보냅니다</div></div><svg class="ic" viewBox="0 0 24 24" data-i="upload" style="color:var(--gold);width:22px;height:22px"></svg></div>
         <div class="sync">
-          <div class="row2">
-            <label class="field"><span>반 코드</span><input id="sync-code" placeholder="선생님이 알려 준 코드" autocomplete="off" maxlength="20"></label>
-            <label class="field"><span>조 이름</span><input id="sync-team" placeholder="예: C-2조" maxlength="20"></label>
-          </div>
+          <label class="field"><span>반 코드</span><input id="sync-code" placeholder="선생님이 알려 준 코드" autocomplete="off" inputmode="numeric" maxlength="20"></label>
           <div class="sync-status">
             <div class="sync-nums"><span><b id="sync-wait">0</b>제출 대기</span><span><b id="sync-done">0</b>제출 완료</span></div>
             <span style="flex:1"></span>
@@ -950,19 +947,19 @@ const PIN_HEX = { green: '#2C9657', blue: '#2F68CC', orange: '#DD6F1B', yellow: 
 //   - 스마트폰 사진의 GPS 정보(EXIF) 또는 지도 앱의 좌표를 확인해 lat, lng 를 바꾸세요.
 //   - step(단차)과 width(폭)는 줄자로 잰 값을 cm 단위로 적습니다.
 const SAMPLE_PINS = [
-  { id: 'p1', name: '구전남도청 본관 정문 출입로', type: 'ramp', lat: 35.14662, lng: 126.92046, step: 0, width: 180,
+  { id: 'p1', naver: '옛 전남도청', name: '구전남도청 본관 정문 출입로', type: 'ramp', lat: 35.14662, lng: 126.92046, step: 0, width: 180,
     desc: '정문 앞 화강석 경사로. 기울기가 완만하고 양쪽에 손잡이가 있어 휠체어와 유모차 모두 혼자 진입할 수 있습니다.' },
-  { id: 'p2', name: '5·18 민주광장 분수대 진입로', type: 'step', lat: 35.14690, lng: 126.92112, step: 3, width: 200,
+  { id: 'p2', naver: '5·18민주광장', name: '5·18 민주광장 분수대 진입로', type: 'step', lat: 35.14690, lng: 126.92112, step: 3, width: 200,
     desc: '보도블록 틈새가 벌어진 구간이 있어 앞바퀴가 걸릴 수 있습니다. 분수대 서쪽 평탄 구간으로 돌아가면 안전합니다.' },
-  { id: 'p3', name: '구전남도청 별관 연결 통로', type: 'elevator', lat: 35.14628, lng: 126.92078, step: 1, width: 110,
+  { id: 'p3', naver: '옛 전남도청', name: '구전남도청 별관 연결 통로', type: 'elevator', lat: 35.14628, lng: 126.92078, step: 1, width: 110,
     desc: '본관과 별관을 잇는 통로. 계단 옆 휠체어 리프트와 엘리베이터가 이어지며, 리프트는 호출 버튼으로 작동합니다.' },
-  { id: 'p4', name: '상무관 입구', type: 'stairs', lat: 35.14748, lng: 126.92086, step: 15, width: 120,
+  { id: 'p4', naver: '광주 상무관', name: '상무관 입구', type: 'stairs', lat: 35.14748, lng: 126.92086, step: 15, width: 120,
     desc: '정면은 석조 계단 3단(단 높이 약 15cm). 오른쪽 목재 우회 경사로로 휠체어 진입이 가능합니다.' },
-  { id: 'p5', name: '국립아시아문화전당(ACC) 지상-지하 EV 탑승장', type: 'elevator', color: 'green', lat: 35.14598, lng: 126.91975, step: 0, width: 160,
+  { id: 'p5', naver: '국립아시아문화전당', name: '국립아시아문화전당(ACC) 지상-지하 EV 탑승장', type: 'elevator', color: 'green', lat: 35.14598, lng: 126.91975, step: 0, width: 160,
     desc: '지상 광장과 지하 문화창조원을 잇는 엘리베이터·에스컬레이터. 문턱이 없고 버튼이 낮아 휠체어 이용자도 바로 누를 수 있습니다.' },
-  { id: 'p6', name: '민주광장 시계탑 주변 보행로', type: 'flat', lat: 35.14722, lng: 126.92168, step: 0, width: 300,
+  { id: 'p6', naver: '5·18민주광장 시계탑', name: '민주광장 시계탑 주변 보행로', type: 'flat', lat: 35.14722, lng: 126.92168, step: 0, width: 300,
     desc: '평탄한 노면에 시각장애인 점자블록이 끊김 없이 이어집니다. 매일 오후 5시 18분 시계탑에서 「임을 위한 행진곡」이 울립니다.' },
-  { id: 'p7', name: 'ACC 장애인 화장실 (지하 1층)', type: 'toilet', lat: 35.14575, lng: 126.91945, step: 0, width: 90,
+  { id: 'p7', naver: '국립아시아문화전당', name: 'ACC 장애인 화장실 (지하 1층)', type: 'toilet', lat: 35.14575, lng: 126.91945, step: 0, width: 90,
     desc: '자동문, 비상벨, 손잡이를 갖춘 장애인 화장실. EV 탑승장에서 약 40m 거리입니다.' }
 ];
 
@@ -1033,11 +1030,32 @@ function popupHTML(p) {
     <div class="pp-nums"><div><small>실측 단차</small><b>${fmtCm(p.step)}<i>cm</i></b></div><div><small>통로 폭</small><b>${fmtCm(p.width)}<i>cm</i></b></div></div>
     <p>${esc(p.desc || '상세 설명이 없습니다.')}</p>
     <div class="pp-act">
-      <a class="btn btn-sm" href="https://map.kakao.com/link/roadview/${p.lat},${p.lng}" target="_blank" rel="noopener">${icon('camera')}로드뷰</a>
+      <a class="btn btn-sm" href="${naverWebURL(p)}" target="_blank" rel="noopener" data-naver="${p.id}">${icon('route')}네이버 길찾기</a>
       <button class="btn btn-sm btn-c" type="button" data-speak="${p.id}">${icon('speaker')}음성 안내</button>
     </div>
   </div>`;
 }
+/* 네이버 지도 연결: 휴대폰은 네이버 지도 앱의 도보 길찾기(현재 위치 → 이 장소), 앱이 없거나 PC면 네이버 지도 웹 검색 */
+function naverQuery(p) {
+  if (p.naver) return p.naver;
+  // 학생이 등록한 장소는 네이버에 없는 이름일 수 있어 가장 가까운 대표 장소 이름으로 검색해요
+  const near = SAMPLE_PINS.slice().sort((a, b) => Math.hypot(a.lat - p.lat, a.lng - p.lng) - Math.hypot(b.lat - p.lat, b.lng - p.lng))[0];
+  return near ? near.naver : '5·18민주광장';
+}
+const naverWebURL = p => `https://map.naver.com/p/search/${encodeURIComponent(naverQuery(p))}`;
+function openNaver(p) {
+  const appURL = `nmap://route/walk?dlat=${p.lat}&dlng=${p.lng}&dname=${encodeURIComponent(p.name)}&appname=io.github.richeepc.mayproject`;
+  const fallback = setTimeout(() => { if (!document.hidden) location.href = naverWebURL(p); }, 1600);
+  document.addEventListener('visibilitychange', () => clearTimeout(fallback), { once: true });
+  location.href = appURL;
+}
+document.addEventListener('click', e => {
+  const a = e.target.closest('[data-naver]'); if (!a) return;
+  const isPhone = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  if (!isPhone || (window.claude && window.claude.use)) return;   // PC·미리보기에서는 링크 그대로 웹으로 열기
+  const p = pins.find(x => x.id === a.dataset.naver); if (!p) return;
+  e.preventDefault(); openNaver(p);
+});
 function pinIcon(p, isNew) {
   return L.divIcon({
     className: 'pin-wrap',
@@ -1789,7 +1807,7 @@ function renderSync() {
   let msg = '', warn = false;
   if (inArtifactView) { msg = 'claude.ai 미리보기에서는 제출할 수 없어요. 선생님이 알려 준 학생용 주소에서 제출해 주세요.'; warn = true; }
   else if (!SUBMIT_URL) { msg = '아직 제출 주소가 설정되지 않았어요. 입력한 기록은 이 휴대폰에 안전하게 보관되고, 설정이 끝나면 한 번에 보낼 수 있어요.'; warn = true; }
-  else if (!syncCfg.code || !syncCfg.team) msg = '반 코드와 조 이름을 넣으면 기록을 추가할 때마다 자동으로 제출돼요.';
+  else if (!syncCfg.code) msg = '반 코드를 넣으면 기록을 추가할 때마다 자동으로 제출돼요.';
   else msg = '인터넷이 끊겨도 기록은 휴대폰에 남아 있다가, 다시 연결되면 자동으로 제출돼요.';
   note.textContent = msg; note.hidden = !msg; note.classList.toggle('warn', warn);
   $('#sync-btn').disabled = syncing;
@@ -1799,8 +1817,8 @@ async function submitAll(silent) {
   const list = pendingItems();
   if (!list.length) { if (!silent) toast('새로 보낼 기록이 없어요'); renderSync(); return; }
   if (inArtifactView || !SUBMIT_URL) { if (!silent) toast('지금 화면에서는 제출할 수 없어요. 기록은 이 휴대폰에 보관돼요'); return; }
-  if (!syncCfg.code || !syncCfg.team) {
-    if (!silent) { toast('반 코드와 조 이름을 먼저 입력해 주세요'); location.hash = 'home'; setTimeout(() => $('#sync-code').focus(), 300); }
+  if (!syncCfg.code) {
+    if (!silent) { toast('반 코드를 먼저 입력해 주세요'); location.hash = 'home'; setTimeout(() => $('#sync-code').focus(), 300); }
     return;
   }
   if (syncing) return;
@@ -1812,7 +1830,7 @@ async function submitAll(silent) {
       const res = await fetch(SUBMIT_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },   // 단순 요청으로 보내 CORS 사전 요청을 피해요
-        body: JSON.stringify({ code: syncCfg.code, team: syncCfg.team, kind, item: data })
+        body: JSON.stringify({ code: syncCfg.code, kind, item: data })
       });
       const j = await res.json();
       if (j.ok) { item.sent = true; ok++; }
@@ -1826,7 +1844,7 @@ async function submitAll(silent) {
   else if (fail) { if (!silent || ok) toast(`${ok}건 제출, 나머지는 인터넷이 연결되면 다시 보낼게요`); }
   else toast(`${ok}건을 선생님께 제출했어요`);
 }
-['code', 'team'].forEach(k => {
+['code'].forEach(k => {
   const el = $('#sync-' + k);
   el.value = syncCfg[k] || '';
   el.addEventListener('change', () => { syncCfg[k] = el.value.trim(); store.set('may.sync', syncCfg); renderSync(); submitAll(true); });
