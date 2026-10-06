@@ -87,7 +87,8 @@ button,input,textarea,select{font:inherit;color:inherit}
 .topnav a[aria-current="page"]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
 .topnav a[data-nav="path"][aria-current="page"] .ic{color:var(--c)}
 .topnav a[data-nav="echo"][aria-current="page"] .ic{color:var(--d)}
-.top-chip{font-family:var(--f-mono);font-size:11px;color:var(--ink-3);border:1px solid var(--line);border-radius:999px;padding:4px 10px;white-space:nowrap}
+.top-chip{font-family:var(--f-mono);font-size:11px;color:var(--ink-3);border:1px solid var(--line);border-radius:999px;padding:4px 10px;white-space:nowrap;text-decoration:none}
+.top-chip.wait{font-family:var(--f-body);font-weight:600;color:var(--gold);background:var(--gold-soft);border-color:transparent}
 .tabbar{position:fixed;left:0;right:0;bottom:0;z-index:1200;display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:6px 10px calc(6px + env(safe-area-inset-bottom,0px));background:var(--surface);background:color-mix(in srgb,var(--surface) 90%,transparent);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-top:1px solid var(--line)}
 .tabbar a{display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 4px 4px;font-size:11.5px;font-weight:600;color:var(--ink-3);text-decoration:none;border-radius:14px}
 .tabbar a .ic{width:22px;height:22px;padding:0;transition:transform .2s}
@@ -102,7 +103,7 @@ main{padding-bottom:calc(92px + env(safe-area-inset-bottom,0px))}
   .tabbar{display:none}
   main{padding-bottom:56px}
 }
-@media (max-width:420px){.top-chip{display:none}}
+@media (max-width:420px){.top-chip:not(.wait){display:none}}
 
 /* ---------- shared components ---------- */
 .card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:18px}
@@ -219,6 +220,7 @@ main{padding-bottom:calc(92px + env(safe-area-inset-bottom,0px))}
 .sync-note{font-size:12.5px;color:var(--ink-3);padding:10px 12px;border-radius:12px;background:var(--surface-2)}
 .sync-note.warn{color:var(--gold);background:var(--gold-soft)}
 .user-tag.wait{color:var(--gold);background:var(--gold-soft)}
+.user-tag.ex{color:var(--ink-3);background:var(--surface-2)}
 .foot{margin-top:34px;padding-top:16px;border-top:1px solid var(--line);font-size:12px;color:var(--ink-3);display:flex;flex-wrap:wrap;gap:6px 16px;justify-content:space-between}
 
 /* ---------- Track C: map ---------- */
@@ -471,7 +473,7 @@ svg.leaflet-zoom-animated{will-change:transform}
       <a href="#path" data-nav="path"><svg class="ic" viewBox="0 0 24 24" data-i="map"></svg>오월의 길</a>
       <a href="#echo" data-nav="echo"><svg class="ic" viewBox="0 0 24 24" data-i="echo"></svg>오월의 메아리</a>
     </nav>
-    <span class="top-chip">베이스라인 v1.0</span>
+    <a class="top-chip" id="topSync" href="#home">베이스라인 v1.0</a>
   </div>
 </header>
 
@@ -528,7 +530,7 @@ svg.leaflet-zoom-animated{will-change:transform}
         <div class="card-head"><div><h3>선생님께 제출</h3><div class="sub">입력한 핀과 소감을 선생님 Google 시트로 보냅니다. 이름은 선생님만 볼 수 있어요</div></div><svg class="ic" viewBox="0 0 24 24" data-i="upload" style="color:var(--gold);width:22px;height:22px"></svg></div>
         <div class="sync">
           <div class="row2">
-            <label class="field"><span>반 코드</span><input id="sync-code" placeholder="선생님이 알려 준 코드" autocomplete="off" inputmode="numeric" maxlength="20"></label>
+            <label class="field"><span>반 코드</span><input id="sync-code" placeholder="선생님이 알려 준 코드" autocomplete="off" autocapitalize="off" maxlength="20"></label>
             <label class="field"><span>이름</span><input id="sync-name" placeholder="예: 김오월" autocomplete="name" maxlength="20"></label>
           </div>
           <div class="sync-status">
@@ -709,7 +711,7 @@ svg.leaflet-zoom-animated{will-change:transform}
     <div class="d-grid">
       <form class="card form-stack" id="msgForm" novalidate>
         <div class="card-head" style="margin-bottom:0"><div><h3>현장 메시지 남기기</h3><div class="sub">답사에서 느낀 점을 한 줄로 남겨 주세요</div></div></div>
-        <label class="field"><span>닉네임</span><input id="m-name" placeholder="예: 빛고을 고1" maxlength="16"></label>
+        <label class="field"><span>닉네임<em>공개될 수 있어요 · 실명 대신 별명</em></span><input id="m-name" placeholder="예: 빛고을 고1" maxlength="16"></label>
         <div class="field"><span class="field-label" id="m-gen-label">세대 구분</span><div class="radio-chips" id="m-gen" role="radiogroup" aria-labelledby="m-gen-label"></div></div>
         <label class="field"><span>방문 소감</span><textarea id="m-text" rows="3" maxlength="300" placeholder="예: 도청 앞에서 시민들의 용기를 기억하겠다고 다짐했습니다."></textarea></label>
         <p class="err" id="m-err" hidden></p>
@@ -1029,7 +1031,7 @@ function renderPlaces() {
       <img src="${esc(thumb(p))}" alt="" loading="lazy" data-focus="${p.id}" style="cursor:pointer">
       <div class="place-main" data-focus="${p.id}" role="button" tabindex="0" aria-label="${esc(p.name)} 지도에서 보기">
         <b>${esc(p.name)}</b>
-        <span>${p.user ? (p.sent ? '<span class="user-tag">제출 완료</span>' : '<span class="user-tag wait">제출 대기</span>') : ''}${esc(t.label)} · 단차 ${fmtCm(p.step)}cm</span>
+        <span>${p.user ? (p.sent ? '<span class="user-tag">제출 완료</span>' : '<span class="user-tag wait">제출 대기</span>') : '<span class="user-tag ex">예시</span>'}${esc(t.label)} · 단차 ${fmtCm(p.step)}cm</span>
       </div>
       <div class="place-side">${signalHTML(grade(p))}${p.user ? `<button class="place-del" type="button" data-del="${p.id}">${icon('trash')}삭제</button>` : ''}</div>
     </div>`;
@@ -1040,7 +1042,7 @@ function popupHTML(p) {
   const t = TYPES[p.type];
   return `<div class="pp">
     <img class="pp-img" src="${esc(thumb(p))}" alt="${esc(p.name)} 사진">
-    <div class="pp-top">${signalHTML(grade(p))}<span class="pp-type">${esc(t.label)}</span></div>
+    <div class="pp-top">${signalHTML(grade(p))}<span class="pp-type">${esc(t.label)}${p.user ? '' : ' · 예시 데이터'}</span></div>
     <h4>${esc(p.name)}</h4>
     <div class="pp-nums"><div><small>실측 단차</small><b>${fmtCm(p.step)}<i>cm</i></b></div><div><small>통로 폭</small><b>${fmtCm(p.width)}<i>cm</i></b></div></div>
     <p>${esc(p.desc || '상세 설명이 없습니다.')}</p>
@@ -1170,7 +1172,9 @@ $('#places').addEventListener('click', e => {
   const del = e.target.closest('[data-del]');
   if (del) {
     armButton(del, '한 번 더 누르면 삭제', () => {
-      pins = pins.filter(p => p.id !== del.dataset.del); savePins(); renderPath(); toast('핀을 삭제했어요');
+      const gone = pins.find(p => p.id === del.dataset.del);
+      pins = pins.filter(p => p.id !== del.dataset.del); savePins(); renderPath(); renderSync();
+      toast(gone && gone.sent ? '이 휴대폰에서 삭제했어요. 이미 제출된 기록은 선생님께 삭제를 요청하세요' : '핀을 삭제했어요');
     });
     return;
   }
@@ -1239,7 +1243,13 @@ $('#gpsBtn').addEventListener('click', () => {
   if (!navigator.geolocation) { toast('위치 기능을 쓸 수 없어요. 지도에서 직접 골라 주세요'); return; }
   toast('현재 위치를 찾는 중…');
   navigator.geolocation.getCurrentPosition(
-    pos => { setFormLoc(pos.coords.latitude, pos.coords.longitude); if (map) map.flyTo([pos.coords.latitude, pos.coords.longitude], 18); toast('현재 위치를 넣었어요'); },
+    pos => {
+      setFormLoc(pos.coords.latitude, pos.coords.longitude);
+      if (map) map.flyTo([pos.coords.latitude, pos.coords.longitude], 18);
+      const acc = Math.round(pos.coords.accuracy || 0);
+      $('#f-loc').textContent += ` (오차 약 ${acc}m)`;
+      toast(acc > 30 ? `오차가 약 ${acc}m로 커요. 잠시 뒤 다시 누르거나 지도에서 직접 골라 주세요` : `현재 위치를 넣었어요 (오차 약 ${acc}m)`);
+    },
     () => toast('위치 권한을 쓸 수 없어요. 지도에서 직접 골라 주세요'),
     { enableHighAccuracy: true, timeout: 8000 }
   );
@@ -1273,7 +1283,11 @@ $('#pinForm').addEventListener('submit', e => {
   e.preventDefault();
   const name = $('#f-name').value.trim();
   const err = $('#f-err');
-  if (!name) { err.textContent = '장소명을 입력해 주세요.'; err.hidden = false; $('#f-name').focus(); return; }
+  const fail = (msg, el) => { err.textContent = msg; err.hidden = false; el.focus(); };
+  if (!name) return fail('장소명을 입력해 주세요.', $('#f-name'));
+  const stepV = parseFloat($('#f-step').value), widthV = parseFloat($('#f-width').value);
+  if (stepV < 0 || stepV > 100) return fail('단차는 0~100cm 사이로 입력해 주세요. cm 단위인지 확인해 주세요.', $('#f-step'));
+  if (widthV < 0 || widthV > 2000) return fail('폭은 cm 단위로 입력해 주세요. (예: 1.5m → 150)', $('#f-width'));
   err.hidden = true;
   const type = $('input[name="ftype"]:checked').value;
   const url = $('#f-photo-url').value.trim();
@@ -1674,9 +1688,9 @@ function renderFeed(newId) {
     const av = AV_COLORS[[...m.nick].reduce((s, ch) => s + ch.charCodeAt(0), 0) % AV_COLORS.length];
     return `<article class="msg${m.id === newId ? ' is-new' : ''}">
       <div class="msg-head"><span class="avatar" style="background:var(${av})">${esc([...m.nick][0] || '?')}</span>
-        <div class="msg-who"><b>${esc(m.nick)}</b><small>${relTime(m.at)}${m.user ? (m.sent ? ' · 제출 완료' : ' · 제출 대기') : ''}</small></div><span class="gen">${esc(m.gen)}</span></div>
+        <div class="msg-who"><b>${esc(m.nick)}</b><small>${relTime(m.at)}${m.user ? (m.sent ? ' · 제출 완료' : ' · 제출 대기') : ' · 예시'}</small></div><span class="gen">${esc(m.gen)}</span></div>
       <p>${esc(m.text)}</p>
-      <div class="msg-tags">${top.length ? top.map(e => `<span class="eb" style="--x:var(${e.v})">${e.name}</span>`).join('') : '<span class="eb" style="--x:var(--ink-3)">감정 신호 없음</span>'}</div>
+      <div class="msg-tags">${m.user ? `<button class="place-del" type="button" data-mdel="${m.id}" style="margin-left:auto;order:2">${icon('trash')}삭제</button>` : ''}${top.length ? top.map(e => `<span class="eb" style="--x:var(${e.v})">${e.name}</span>`).join('') : '<span class="eb" style="--x:var(--ink-3)">감정 신호 없음</span>'}</div>
     </article>`;
   }).join('') : '<div class="empty">조건에 맞는 메시지가 없어요</div>';
 }
@@ -1706,6 +1720,14 @@ $('#cloud').addEventListener('click', e => {
   activeWord = activeWord === b.dataset.word ? null : b.dataset.word;
   renderCloud(keywordCounts(msgs)); renderFeed();
   if (activeWord && innerWidth < 900) $('#feedCard').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+});
+$('#feed').addEventListener('click', e => {
+  const del = e.target.closest('[data-mdel]'); if (!del) return;
+  armButton(del, '한 번 더 누르면 삭제', () => {
+    const gone = msgs.find(m => m.id === del.dataset.mdel);
+    msgs = msgs.filter(m => m.id !== del.dataset.mdel); saveMsgs(); lastAnalysis = null; $('#anaOut').innerHTML = ''; renderEcho(); renderSync();
+    toast(gone && gone.sent ? '이 휴대폰에서 삭제했어요. 이미 제출된 기록은 선생님께 삭제를 요청하세요' : '메시지를 삭제했어요');
+  });
 });
 $('#feedFilter').addEventListener('click', e => { if (e.target.closest('#clearWord')) { activeWord = null; renderCloud(keywordCounts(msgs)); renderFeed(); } });
 
@@ -1817,7 +1839,11 @@ const pendingItems = () => [
   ...msgs.filter(m => m.user && !m.sent).map(item => ({ kind: 'msg', item }))
 ];
 function renderSync() {
-  $('#sync-wait').textContent = pendingItems().length;
+  const waitN = pendingItems().length;
+  $('#sync-wait').textContent = waitN;
+  const chip = $('#topSync');
+  chip.textContent = waitN ? `제출 대기 ${waitN}` : '베이스라인 v1.0';
+  chip.classList.toggle('wait', waitN > 0);
   $('#sync-done').textContent = pins.filter(p => p.user && p.sent).length + msgs.filter(m => m.user && m.sent).length;
   const note = $('#sync-note');
   let msg = '', warn = false;
@@ -1856,6 +1882,7 @@ async function submitAll(silent) {
   savePins(); saveMsgs();
   syncing = false;
   renderSync(); renderPlaces(); renderFeed();
+  if (!fail && pendingItems().length) setTimeout(() => submitAll(true), 300);
   if (err === 'bad_code') toast('반 코드가 맞지 않아요. 선생님께 확인해 주세요');
   else if (fail) { if (!silent || ok) toast(`${ok}건 제출, 나머지는 인터넷이 연결되면 다시 보낼게요`); }
   else toast(`${ok}건을 선생님께 제출했어요`);
@@ -1867,6 +1894,7 @@ async function submitAll(silent) {
 });
 $('#sync-btn').addEventListener('click', () => submitAll(false));
 addEventListener('online', () => submitAll(true));
+document.addEventListener('visibilitychange', () => { if (!document.hidden) submitAll(true); });
 
 /* 시작 */
 renderChecklist();
