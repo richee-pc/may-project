@@ -255,6 +255,21 @@ body.public .d-grid.pub1{grid-template-columns:minmax(0,1fr)}
 .about .card h3{font-size:16px;margin-bottom:6px}
 .about .card p{font-size:13.5px;color:var(--ink-2);line-height:1.6}
 .about .card b{color:var(--ink)}
+.route{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.route button{width:100%;display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:10px;align-items:center;text-align:left;border:1px solid var(--line);background:var(--bg);border-radius:14px;padding:9px 10px;cursor:pointer;color:var(--ink)}
+.route button[aria-pressed="true"]{border-color:var(--c);background:var(--c-soft)}
+.route .rn{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:var(--ink);color:var(--bg);font-family:var(--f-mono);font-size:12px;font-weight:600}
+.route b{display:block;font-size:14px;line-height:1.3}
+.route small{display:block;font-size:11.5px;color:var(--ink-3);line-height:1.4}
+.route .rc{font-family:var(--f-mono);font-size:12px;font-weight:600;padding:3px 8px;border-radius:999px;background:var(--c-soft);color:var(--c);white-space:nowrap}
+.route .rc.zero{background:var(--gold-soft);color:var(--gold)}
+.info{display:grid;gap:12px}
+@media (min-width:900px){.info{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.info .card h3{font-size:16px;margin-bottom:8px}
+.info dl{margin:0;display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 10px;font-size:13.5px}
+.info dt{color:var(--ink-3);font-weight:600}
+.info dd{margin:0;color:var(--ink-2)}
+.info a{color:var(--c)}
 .foot{margin-top:34px;padding-top:16px;border-top:1px solid var(--line);font-size:12px;color:var(--ink-3);display:flex;flex-wrap:wrap;gap:6px 16px;justify-content:space-between}
 
 /* ---------- Track C: map ---------- */
@@ -552,6 +567,29 @@ svg.leaflet-zoom-animated{will-change:transform}
     </div>
 
     <div class="sec">
+      <div class="sec-head"><h2>옛 전남도청 관람 안내</h2><span class="muted">현장 팸플릿(2026.10) 기준 · 바뀔 수 있어요</span></div>
+      <div class="info">
+        <div class="card"><h3>관람 시간</h3><dl>
+          <dt>운영</dt><dd>화~일 10:00~18:00 · 무료</dd>
+          <dt>휴관</dt><dd>매주 월요일 (공휴일이면 개관, 다음 평일 휴관)</dd>
+          <dt>정기 해설</dt><dd>10:30 · 13:00(휴일만) · 14:00 · 15:00 · 16:00</dd>
+          <dt>예약</dt><dd><a href="https://518history.go.kr" target="_blank" rel="noopener">518history.go.kr</a>에서 해설 관람 사전 예약</dd>
+        </dl></div>
+        <div class="card"><h3>오시는 길</h3><dl>
+          <dt>지하철</dt><dd>문화전당역 3~5번 출구</dd>
+          <dt>버스</dt><dd>문화전당역 정류장</dd>
+          <dt>주차</dt><dd>ACC 주차장 A·B, ACC 부설주차장(대형버스 가능)</dd>
+          <dt>주소</dt><dd>동구 문화전당로 38</dd>
+        </dl></div>
+        <div class="card"><h3>관람 동선</h3><dl>
+          <dt>순서</dt><dd>① 도청 본관 → ② 도경찰국 본관 → ③ 도경찰국 민원실 → ④ 도청 회의실 → ⑤ 상무관 → ⑥ 도청 별관</dd>
+          <dt>방문자센터</dt><dd>도청 별관 1층 · 062-601-4180~4182</dd>
+          <dt>해설 문의</dt><dd>062-601-4185</dd>
+        </dl></div>
+      </div>
+    </div>
+
+    <div class="sec">
       <div class="sec-head"><h2>두 개의 트랙</h2><span class="muted">탭해서 바로 체험</span></div>
       <div class="tracks">
         <a class="track track--c" href="#path">
@@ -679,6 +717,11 @@ svg.leaflet-zoom-animated{will-change:transform}
           <span><b>AI 시각 도슨트</b><small>현장 안내판·노면 사진을 AI가 분석해 말로 안내하는 시뮬레이터</small></span>
           <svg class="ic" viewBox="0 0 24 24" data-i="arrow"></svg>
         </button>
+
+        <div class="card">
+          <div class="card-head"><div><h3>관람 동선 · 건물별 조사 현황</h3><div class="sub">건물을 누르면 그 건물의 장소만 보여요. 비어 있는 건물은 정보를 보태 주세요</div></div></div>
+          <ol class="route" id="route"></ol>
+        </div>
 
         <div class="card">
           <div class="card-head"><div><h3>장소 목록</h3><div class="sub" id="placeCount"></div></div></div>
@@ -1068,47 +1111,59 @@ const PIN_HEX = { green: '#2C9657', blue: '#2F68CC', orange: '#DD6F1B', yellow: 
 
 // 2026-10-14 현장 탐구에서 학생들이 직접 잰 값입니다 (지도교사 1차 검수 통과 17건).
 // [TODO for Students 1]: 위치가 기록되지 않았거나 튄 13건을 다시 재서 아래에 추가해 보세요.
+//   - 아직 기록이 없는 건물: ④ 도청 회의실, ⑤ 상무관, ⑥ 도청 별관 (bld: 4, 5, 6)
 //   - 시트의 '핀' 탭에서 검수 'X' 인 줄이 재측정 대상입니다.
 const SAMPLE_PINS = [
-  { id: 'umv7pjxii', naver: '옛 전남도청', name: '본관 정문', type: 'flat', lat: 35.1473523, lng: 126.9196363, step: 0, width: 200,
+  { id: 'umv7pjxii', bld: 1, naver: '옛 전남도청', name: '도청 본관 정문', type: 'flat', lat: 35.1473523, lng: 126.9196363, step: 0, width: 200,
     desc: '' },
-  { id: 'umv7q7pse', naver: '옛 전남도청', name: '옛 전라남도청 본관', type: 'ramp', lat: 35.1468857, lng: 126.9200103, step: 10, width: '',
+  { id: 'umv7q7pse', bld: 1, naver: '옛 전남도청', name: '도청 본관 출입 경사로', type: 'ramp', lat: 35.1468857, lng: 126.9200103, step: 10, width: '',
     desc: '' },
-  { id: 'umv7q8pc3', naver: '옛 전남도청', name: '옛 전남도청 본관', type: 'ramp', lat: 35.14674371, lng: 126.9193874, step: 35, width: 160,
+  { id: 'umv7q8pc3', bld: 1, naver: '옛 전남도청', name: '도청 본관 경사로', type: 'ramp', lat: 35.14674371, lng: 126.9193874, step: 35, width: 160,
     desc: '' },
-  { id: 'umv7qdnit', naver: '옛 전남도청', name: '본관 2층 맨 끝', type: 'ramp', lat: 35.1473018, lng: 126.9196743, step: 0, width: 120,
+  { id: 'umv7qdnit', bld: 1, naver: '옛 전남도청', name: '도청 본관 2층 끝', type: 'ramp', lat: 35.1473018, lng: 126.9196743, step: 0, width: 120,
     desc: '' },
-  { id: 'umv7qo4to', naver: '옛 전남도청', name: '본관 계단', type: 'stairs', lat: 35.1470188, lng: 126.9200348, step: 100, width: 250,
+  { id: 'umv7qo4to', bld: 1, naver: '옛 전남도청', name: '도청 본관 계단', type: 'stairs', lat: 35.1470188, lng: 126.9200348, step: 100, width: 250,
     desc: '계단이 너무 높아 장애인이나 몸이 불편한 분은 올라가기 어려움. 옆 안전바도 낡아 관리가 필요함' },
-  { id: 'umv7qo6m9', naver: '옛 전남도청', name: '본관 입구 계단', type: 'stairs', lat: 35.14701999, lng: 126.9199097, step: 12, width: 153,
+  { id: 'umv7qo6m9', bld: 1, naver: '옛 전남도청', name: '도청 본관 입구 계단', type: 'stairs', lat: 35.14701999, lng: 126.9199097, step: 12, width: 153,
     desc: '깨진 부분이 있음' },
-  { id: 'umv7quh05', naver: '옛 전남도청', name: '옛 전라남도경찰국 본관', type: 'ramp', lat: 35.1465289, lng: 126.9193383, step: 0, width: '',
+  { id: 'umv7quh05', bld: 2, naver: '옛 전남도청', name: '도경찰국 본관 출입로', type: 'ramp', lat: 35.1465289, lng: 126.9193383, step: 0, width: '',
     desc: '' },
-  { id: 'umv7quv3w', naver: '옛 전남도청', name: '경찰국 본관 입구', type: 'stairs', lat: 35.1471234, lng: 126.9193383, step: 0, width: 300,
+  { id: 'umv7quv3w', bld: 2, naver: '옛 전남도청', name: '도경찰국 본관 입구 계단', type: 'stairs', lat: 35.1471234, lng: 126.9193383, step: 0, width: 300,
     desc: '' },
-  { id: 'umv7qwjer', naver: '옛 전남도청', name: '경찰국 앞 길', type: 'ramp', lat: 35.14708914, lng: 126.9193258, step: 0, width: 356,
+  { id: 'umv7qwjer', bld: 2, naver: '옛 전남도청', name: '도경찰국 본관 앞 길', type: 'ramp', lat: 35.14708914, lng: 126.9193258, step: 0, width: 356,
     desc: '' },
-  { id: 'umv7qxovm', naver: '옛 전남도청', name: '경찰국 정문 옆', type: 'elevator', lat: 35.14701506, lng: 126.91915, step: 0, width: 600,
+  { id: 'umv7qxovm', bld: 2, naver: '옛 전남도청', name: '도경찰국 정문 옆', type: 'elevator', lat: 35.14701506, lng: 126.91915, step: 0, width: 600,
     desc: '' },
-  { id: 'umv7r6e00', naver: '옛 전남도청', name: '경찰국 본관', type: 'ramp', lat: 35.1467875, lng: 126.9199198, step: 0, width: '',
+  { id: 'umv7r6e00', bld: 2, naver: '옛 전남도청', name: '도경찰국 본관 경사로', type: 'ramp', lat: 35.1467875, lng: 126.9199198, step: 0, width: '',
     desc: '손잡이가 있음' },
-  { id: 'umv7r794x', naver: '옛 전남도청', name: '경찰국 본관 화장실', type: 'toilet', lat: 35.1465476, lng: 126.9192789, step: 0, width: '',
+  { id: 'umv7r794x', bld: 2, naver: '옛 전남도청', name: '도경찰국 본관 화장실', type: 'toilet', lat: 35.1465476, lng: 126.9192789, step: 0, width: '',
     desc: '' },
-  { id: 'umv7r7jkm', naver: '옛 전남도청', name: '경찰국 본관 장애인 화장실', type: 'toilet', lat: 35.14703946, lng: 126.9204774, step: 0, width: '',
+  { id: 'umv7r7jkm', bld: 2, naver: '옛 전남도청', name: '도경찰국 본관 장애인 화장실', type: 'toilet', lat: 35.14703946, lng: 126.9204774, step: 0, width: '',
     desc: '관리가 잘 되어 있음' },
-  { id: 'umv7r8yey', naver: '옛 전남도청', name: '경찰국 종합민원실', type: 'stairs', lat: 35.1465404, lng: 126.9206706, step: 0, width: '',
+  { id: 'umv7r8yey', bld: 3, naver: '옛 전남도청', name: '도경찰국 민원실 입구 계단', type: 'stairs', lat: 35.1465404, lng: 126.9206706, step: 0, width: '',
     desc: '' },
-  { id: 'umv7r92ub', naver: '옛 전남도청', name: '민원실', type: 'ramp', lat: 35.1464294, lng: 126.9210865, step: 0, width: 100,
+  { id: 'umv7r92ub', bld: 3, naver: '옛 전남도청', name: '도경찰국 민원실 경사로', type: 'ramp', lat: 35.1464294, lng: 126.9210865, step: 0, width: 100,
     desc: '' },
-  { id: 'umv7razoj', naver: '옛 전남도청', name: '물 마시는 곳', type: 'rest', lat: 35.14642865, lng: 126.9210872, step: 0, width: '',
+  { id: 'umv7razoj', bld: 3, naver: '옛 전남도청', name: '도경찰국 민원실 물 마시는 곳', type: 'rest', lat: 35.14642865, lng: 126.9210872, step: 0, width: '',
     desc: '' },
-  { id: 'umv7rqcak', naver: '옛 전남도청', name: '전라남도경찰국', type: 'ramp', lat: 35.14685562, lng: 126.9202226, step: 0, width: 350,
+  { id: 'umv7rqcak', bld: 2, naver: '옛 전남도청', name: '도경찰국 출입로', type: 'ramp', lat: 35.14685562, lng: 126.9202226, step: 0, width: 350,
     desc: '노면이 잘 정리되어 매끈함. 휠체어 이용자도 쉽게 이동 가능' }
 ];
 
 const BASE_PIN_IDS = new Set(SAMPLE_PINS.map(p => p.id));
 let pins = [...structuredClone(SAMPLE_PINS), ...store.get('may.pins.v1', []).filter(p => p.user && !BASE_PIN_IDS.has(p.id))];
 let pinFilter = 'all';
+let bldFilter = 0;   // 0 = 모든 건물
+// 옛 전남도청 관람 동선 (현장 팸플릿 2026.10 기준)
+const BUILDINGS = [
+  { n: 1, name: '도청 본관', about: '열흘간의 항쟁 서사 전시 · 마지막 항전지', fac: '' },
+  { n: 2, name: '도경찰국 본관', about: '5·18 테마 전시 · 민주주의 역사실', fac: '화장실' },
+  { n: 3, name: '도경찰국 민원실', about: '기획전시실 · 5·18 휴게 라운지', fac: '화장실' },
+  { n: 4, name: '도청 회의실', about: '시민군 무기고 · 열린 도서관', fac: '화장실' },
+  { n: 5, name: '상무관', about: '희생자 추모 공간', fac: '화장실' },
+  { n: 6, name: '도청 별관', about: '방문자센터 · 복원역사실 · 야외쉼터', fac: '방문자센터 · 화장실' }
+];
+const bldName = n => (BUILDINGS.find(b => b.n === n) || {}).name || '';
 let map = null, markerLayer = null, schematicLayer = null, tileLayer = null, routeLayer = null, tempMarker = null;
 const markers = {};
 let pickMode = false;
@@ -1147,11 +1202,11 @@ function renderPinStats() {
   $('#s-pins').textContent = s.total; $('#s-smooth').textContent = s.smooth; $('#s-caution').textContent = s.caution;
   $('#h-pins').textContent = s.total; $('#h-caution').textContent = s.caution;
 }
-const visiblePins = () => pins.filter(p => pinFilter === 'all' || TYPES[p.type].group === pinFilter);
+const visiblePins = () => pins.filter(p => (pinFilter === 'all' || TYPES[p.type].group === pinFilter) && (!bldFilter || p.bld === bldFilter));
 
 function renderPlaces() {
   const list = visiblePins();
-  $('#placeCount').textContent = `${list.length}곳 표시 중`;
+  $('#placeCount').textContent = `${list.length}곳 표시 중${bldFilter ? ' · ' + bldName(bldFilter) : ''}`;
   $('#places').innerHTML = list.length ? list.map(p => {
     const t = TYPES[p.type];
     return `<div class="place" data-id="${p.id}">
@@ -1169,7 +1224,7 @@ function popupHTML(p) {
   const t = TYPES[p.type];
   return `<div class="pp">
     <img class="pp-img" src="${esc(thumb(p))}" alt="${esc(p.name)} 사진">
-    <div class="pp-top">${signalHTML(grade(p))}<span class="pp-type">${esc(t.label)}${p.user ? '' : (p.visitor ? ' · 방문객 제보' : ' · 학생 실측(10.14)')}</span></div>
+    <div class="pp-top">${signalHTML(grade(p))}<span class="pp-type">${p.bld ? '❶❷❸❹❺❻'[p.bld - 1] + ' ' + esc(bldName(p.bld)) + ' · ' : ''}${esc(t.label)}${p.user ? '' : (p.visitor ? ' · 방문객 제보' : ' · 학생 실측(10.14)')}</span></div>
     <h4>${esc(p.name)}</h4>
     <div class="pp-nums"><div><small>실측 단차</small><b>${fmtCm(p.step)}<i>cm</i></b></div><div><small>통로 폭</small><b>${fmtCm(p.width)}<i>cm</i></b></div></div>
     <p>${esc(p.desc || '상세 설명이 없습니다.')}</p>
@@ -1218,7 +1273,7 @@ function renderMarkers(newId) {
     m.addTo(markerLayer); markers[p.id] = m;
   });
 }
-function renderPath(newId) { renderPinStats(); renderPlaces(); renderMarkers(newId); }
+function renderPath(newId) { renderPinStats(); renderRoute(); renderPlaces(); renderMarkers(newId); }
 
 function focusPin(id) {
   const p = pins.find(x => x.id === id); if (!p || !map) return;
@@ -1227,6 +1282,31 @@ function focusPin(id) {
   map.flyTo([p.lat, p.lng], 18, { duration: reduceMotion ? 0 : .8 });
   setTimeout(() => markers[id] && markers[id].openPopup(), reduceMotion ? 50 : 850);
 }
+function renderRoute() {
+  const el = $('#route'); if (!el) return;
+  el.innerHTML = BUILDINGS.map(b => {
+    const n = pins.filter(p => p.bld === b.n).length;
+    return `<li><button type="button" data-bld="${b.n}" aria-pressed="${bldFilter === b.n}"><span class="rn">${b.n}</span><span><b>${esc(b.name)}</b><small>${esc(b.about)}${b.fac ? ' · ' + esc(b.fac) + ' 있음(팸플릿 기준)' : ''}</small></span><span class="rc${n ? '' : ' zero'}">${n ? n + '곳' : '조사 필요'}</span></button></li>`;
+  }).join('');
+}
+$('#route').addEventListener('click', e => {
+  const b = e.target.closest('[data-bld]'); if (!b) return;
+  const n = Number(b.dataset.bld);
+  bldFilter = bldFilter === n ? 0 : n;
+  renderPath();
+  const list = visiblePins();
+  if (bldFilter && !list.length) {
+    toast(`${bldName(n)}은(는) 아직 조사된 곳이 없어요. 아래 폼으로 정보를 보태 주세요`);
+    $('#f-name').value = bldName(n) + ' ';
+    bldFilter = 0; renderPath();
+    $('#pinForm').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+    return;
+  }
+  if (map && list.length) {
+    if (innerWidth < 900) $('#mapWrap').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' });
+    map.flyToBounds(L.latLngBounds(list.map(p => [p.lat, p.lng])).pad(0.4), { maxZoom: 19, duration: reduceMotion ? 0 : .8 });
+  }
+});
 function setFilter(f) {
   pinFilter = f;
   $$('#filters .chip').forEach(c => c.setAttribute('aria-pressed', c.dataset.filter === f ? 'true' : 'false'));
