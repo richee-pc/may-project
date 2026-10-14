@@ -278,6 +278,13 @@ body.public .d-grid.pub1{grid-template-columns:minmax(0,1fr)}
 .floor .fl{display:grid;place-items:center;background:var(--ink);color:var(--bg);font-family:var(--f-mono);font-size:12px;font-weight:600}
 .floor.under .fl{background:var(--ink-3)}
 .floor.roof .fl{background:var(--c)}
+.plan{display:flex;gap:3px;padding:5px;min-width:0;background:var(--bg)}
+.pc{min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-align:center;border:1.5px solid var(--ink-2);border-radius:6px;background:var(--surface);padding:5px 3px;min-height:52px}
+.pc .cn{display:grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--c);color:var(--on);font-family:var(--f-mono);font-size:11px;font-weight:700;flex:none}
+.pc .ct{font-size:11px;line-height:1.25;color:var(--ink);word-break:keep-all;overflow-wrap:anywhere}
+.pc.stair{border-style:dashed;border-color:var(--ink-3);background:repeating-linear-gradient(0deg,var(--surface),var(--surface) 5px,var(--line) 5px,var(--line) 6px)}
+.pc.stair .ct,.pc.door .ct{color:var(--ink-3);font-weight:600}
+.pc.door{border-color:var(--gold);background:var(--gold-soft)}
 .floor .rooms{display:flex;flex-wrap:wrap;gap:5px;padding:8px;background:repeating-linear-gradient(90deg,var(--surface),var(--surface) 28px,var(--bg) 28px,var(--bg) 30px)}
 .room{font-size:12.5px;padding:4px 9px;border-radius:8px;background:var(--surface);border:1px solid var(--line);color:var(--ink);line-height:1.35}
 .ground{height:8px;background:repeating-linear-gradient(135deg,var(--line),var(--line) 4px,transparent 4px,transparent 8px);margin:-12px 0 12px;border-radius:0 0 6px 6px}
@@ -1191,41 +1198,41 @@ const BUILDINGS = [
   { n: 1, name: '도청 본관', about: '열흘간의 항쟁 서사 전시 · 마지막 항전지', fac: '',
     lat: 35.147053, lng: 126.920044, loc: 'map',
     floors: [
-      ['3F', ['상황실', '도지사 비서실', '도지사 접견실 (협상 장소 재현)', '도지사실']],
-      ['2F', ['부지사실 (시민수습대책위원회)', '보사·식산국장실', '상공국장실 (기자회견장 재현)', '기획관리실장실', '내무국장·새마을상황실']],
-      ['1F', ['지방과 (열흘간의 항쟁 이야기)', '서무과 인사계 (시민자치)', '서무과 서무계 (시민군 상황실·방송실 재현)']]
+      ['3F', [[12, '도지사실', 1.2], [11, '도지사 접견실', 1], [10, '도지사 비서실', 1], ['계단'], [9, '상황실', 2.2]]],
+      ['2F', [[6, '상공국장실', 1], [5, '보사·식산국장실', 1.1], [4, '부지사실', 1.2], ['계단'], [7, '기획관리실장실', 1.1], [8, '내무국장·새마을상황실', 1.1]]],
+      ['1F', [[2, '서무과 인사계', 1], [3, '서무과 서무계', 1], ['현관·계단', 'e'], [1, '지방과', 2.4]]]
     ] },
   { n: 2, name: '도경찰국 본관', about: '5·18 테마 전시 · 민주주의 역사실', fac: '화장실',
     lat: 35.146873, lng: 126.919631, loc: 'student',
     floors: [
-      ['2F', ['구술영상기록실', '오월이야기 소통실', '경찰국장실']],
-      ['1F', ['5·18 민주주의 역사실', '주제영상실']]
+      ['2F', [[5, '경찰국장실', 0.9], [4, '오월이야기 소통실', 1.4], ['계단'], [3, '구술영상기록실', 2], ['계단']]],
+      ['1F', [[2, '주제영상실', 1.7], ['현관', 'e'], [1, '5·18 민주주의 역사실', 1.7]]]
     ] },
   { n: 3, name: '도경찰국 민원실', about: '기획전시실 · 5·18 휴게 라운지', fac: '화장실',
     lat: 35.146466, lng: 126.920948, loc: 'student',
     floors: [
-      ['2F', ['5·18 휴게 라운지']],
-      ['1F', ['기획전시실', '5·18 당시 희생자 입관 장소']]
+      ['2F', [['계단'], [3, '5·18 휴게 라운지', 3]]],
+      ['1F', [['계단'], [2, '희생자 입관 장소', 1.1], [1, '기획전시실', 2.2]]]
     ] },
   { n: 4, name: '도청 회의실', about: '시민군 무기고 · 열린 도서관', fac: '화장실',
     lat: null, lng: null, loc: '',
     floors: [
-      ['2F', ['대회의실 (시민들의 쉼터)']],
-      ['1F', ['열린 도서관 (열람실·자료검색실)']],
-      ['B1', ['시민군 무기고 재현']]
+      ['2F', [[3, '대회의실', 3], ['계단']]],
+      ['1F', [[2, '열린 도서관', 3], ['현관', 'e']]],
+      ['B1', [[1, '시민군 무기고', 3], ['계단']]]
     ] },
   { n: 5, name: '상무관', about: '희생자 추모 공간', fac: '화장실',
     lat: 35.148013, lng: 126.920016, loc: 'map',
     floors: [
-      ['1F', ['추모 공간 (희생자들이 임시로 안치되었던 곳)']]
+      ['1F', [['입구', 'e'], [1, '추모 공간', 4]]]
     ] },
   { n: 6, name: '도청 별관', about: '방문자센터 · 복원역사실 · 야외쉼터', fac: '방문자센터 · 화장실 · 수유실 · 물품보관함',
     lat: 35.146737, lng: 126.919394, loc: 'map',
     floors: [
-      ['옥상', ['야외쉼터']],
-      ['3F', ['교육체험실', '세미나실']],
-      ['2F', ['복원역사실', '건축역사실']],
-      ['1F', ['방문자 센터 (관람·해설 안내)', '물품보관함 · 수유실']]
+      ['옥상', [[6, '야외쉼터', 3]]],
+      ['3F', [[4, '교육체험실', 1.5], [5, '세미나실', 1.5]]],
+      ['2F', [[2, '복원역사실', 1.5], [3, '건축역사실', 1.5]]],
+      ['1F', [[1, '방문자 센터 · 물품보관함 · 수유실', 3], ['입구', 'e']]]
     ] }
 ];
 // 야외 전시 (팸플릿 기준, 위치는 아직 조사 전)
@@ -1243,6 +1250,8 @@ function grade(p) {
   const g = TYPES[p.type].group;
   if (g === 'amenity') return { lv: 0, label: '이용 가능' };
   if (p.type === 'stairs') return { lv: 1, label: '우회로 확인 필요' };
+  // 경사로에서 잰 높이는 문턱이 아니라 경사로 전체 높이일 수 있어요. 기울기를 재기 전까지는 '어려움'으로 단정하지 않아요
+  if (p.type === 'ramp' && (+p.step || 0) > 1) return { lv: 1, label: '기울기 확인 필요' };
   const s = +p.step || 0;
   if (s <= 1) return { lv: 0, label: '원활' };
   if (s <= 3) return { lv: 1, label: '주의' };
@@ -1369,14 +1378,17 @@ function showBuilding(n) {
   const locTag = b.loc === 'map' ? '<span class="tag">지도 데이터(OpenStreetMap) 기준</span>'
     : b.loc === 'student' ? '<span class="tag">학생 실측 위치 기준 · 오차 있을 수 있음</span>'
     : '<span class="tag tag-todo">위치 확인 필요</span>';
-  const floorRow = ([f, rooms]) => `<div class="floor${f.startsWith('B') ? ' under' : f === '옥상' ? ' roof' : ''}"><span class="fl">${f}</span><div class="rooms">${rooms.map(r => `<span class="room">${esc(r)}</span>`).join('')}</div></div>`;
+  const cell = c => typeof c[0] === 'number'
+    ? `<div class="pc" style="flex:${c[2]} 1 0"><span class="cn">${c[0]}</span><span class="ct">${esc(c[1])}</span></div>`
+    : `<div class="pc ${c[1] === 'e' ? 'door' : 'stair'}" style="flex:.55 1 0"><span class="ct">${esc(c[0])}</span></div>`;
+  const floorRow = ([f, cells]) => `<div class="floor${f.startsWith('B') ? ' under' : f === '옥상' ? ' roof' : ''}"><span class="fl">${f}</span><div class="plan">${cells.map(cell).join('')}</div></div>`;
   const facs = (b.fac ? b.fac.split(' · ') : []).map(f => `<span>${esc(f)}</span>`).join('') + '<span class="miss">엘리베이터·경사로 위치 조사 필요</span>';
   $('#bld-eyebrow').textContent = `관람 동선 ${n} / 6`;
   $('#bld-title').textContent = `${'①②③④⑤⑥'[n - 1]} ${b.name}`;
   $('#bld-about').textContent = b.about;
   $('#bld-body').innerHTML = `
     <div class="bld-loc">${locTag}${b.lat ? `<button class="btn btn-sm" type="button" data-bldmap="${n}">${icon('pin')}지도에서 위치 보기</button>` : ''}</div>
-    <div class="bld-sec">층별 안내</div>
+    <div class="bld-sec">층별 약도 <span style="font-weight:500;color:var(--ink-3)">(직접 그린 그림 · 방 크기와 위치는 대략적이에요)</span></div>
     <div class="floors">${b.floors.map(floorRow).join('')}</div>
     <div class="ground" aria-hidden="true"></div>
     <div class="bld-sec">편의시설 <span style="font-weight:500;color:var(--ink-3)">(팸플릿 기준)</span></div>
@@ -1388,7 +1400,7 @@ function showBuilding(n) {
       <button class="btn btn-c" type="button" data-bldadd="${n}">${icon('plus')}이 건물 정보 보태기</button>
       ${list.length ? `<button class="btn" type="button" data-bldfilter="${n}">${icon('map')}이 건물 장소만 보기</button>` : ''}
     </div>
-    <p class="note">층별 안내는 옛 전남도청 현장 팸플릿(2026.10)의 내용을 바탕으로 다시 그린 그림이에요. 실제 전시는 바뀔 수 있어요.</p>`;
+    <p class="note">층별 약도는 옛 전남도청 현장 팸플릿(2026.10)의 방 배치를 참고해 다시 그린 그림이에요. 번호는 팸플릿 관람 순서와 같아요. 실제 전시는 바뀔 수 있어요.</p>`;
   hydrateIcons($('#bld-body'));
   openSheet('sheet-bld');
 }
