@@ -239,6 +239,15 @@ main{padding-bottom:calc(92px + env(safe-area-inset-bottom,0px))}
 .opt{font-family:var(--f-body);font-size:11px;font-weight:600;color:var(--ink-3);background:var(--surface-2);border-radius:6px;padding:1px 6px;margin-left:6px}
 .flash{animation:flash 1.8s ease-out 1}
 @keyframes flash{0%,45%{box-shadow:0 0 0 4px var(--gold)}100%{box-shadow:0 0 0 0 transparent}}
+.po{display:none!important}
+body.public .po{display:block!important}
+body.public .so{display:none!important}
+body.public .d-grid.pub1{grid-template-columns:minmax(0,1fr)}
+.about{display:grid;gap:12px}
+@media (min-width:900px){.about{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.about .card h3{font-size:16px;margin-bottom:6px}
+.about .card p{font-size:13.5px;color:var(--ink-2);line-height:1.6}
+.about .card b{color:var(--ink)}
 .foot{margin-top:34px;padding-top:16px;border-top:1px solid var(--line);font-size:12px;color:var(--ink-3);display:flex;flex-wrap:wrap;gap:6px 16px;justify-content:space-between}
 
 /* ---------- Track C: map ---------- */
@@ -491,7 +500,7 @@ svg.leaflet-zoom-animated{will-change:transform}
       <a href="#path" data-nav="path"><svg class="ic" viewBox="0 0 24 24" data-i="map"></svg>오월의 길</a>
       <a href="#echo" data-nav="echo"><svg class="ic" viewBox="0 0 24 24" data-i="echo"></svg>오월의 메아리</a>
     </nav>
-    <a class="top-chip" id="topSync" href="#home">베이스라인 v1.0</a>
+    <a class="top-chip so" id="topSync" href="#home">베이스라인 v1.0</a>
   </div>
 </header>
 
@@ -509,7 +518,16 @@ svg.leaflet-zoom-animated{will-change:transform}
       </div>
     </div>
 
-    <div class="sec">
+    <div class="sec po">
+      <div class="sec-head"><h2>이 지도에 대하여</h2><span class="muted">2026년 10월 14일 현장 조사</span></div>
+      <div class="about">
+        <div class="card"><h3>누가 만들었나요</h3><p><b>조선대학교부속고등학교</b> 민주인권 동아리 <b>나우누리</b>와 인공지능 동아리 <b>알고리듬</b> 학생 20명이 옛 전남도청 일대를 직접 걸으며 조사하고, 학생들이 만든 웹앱으로 기록했습니다.</p></div>
+        <div class="card"><h3>무엇을 담았나요</h3><p><b>오월의 길</b>: 휠체어·유모차·어르신이 이용할 때 필요한 경사로, 계단, 화장실 등 17곳의 단차와 통로 폭(줄자 실측). <b>오월의 메아리</b>: 학생들이 현장에서 남긴 소감과 방문객 의견 수렴 방식 조사.</p></div>
+        <div class="card"><h3>이용할 때 알아 두세요</h3><p>고등학생이 직접 잰 값으로, 지도교사 검수를 거친 기록만 실었습니다. 건물 안에서는 위치가 수 m 어긋날 수 있으며, 기관의 공식 안내가 아닙니다. 아래 탭에서 <b>오월의 길</b>과 <b>오월의 메아리</b>를 둘러보세요.</p></div>
+      </div>
+    </div>
+
+    <div class="sec so">
       <div class="guide">
         <div class="guide-head"><svg class="ic" viewBox="0 0 24 24" data-i="route"></svg>답사 당일, 이 순서대로 하세요</div>
         <ol class="guide-steps">
@@ -556,7 +574,7 @@ svg.leaflet-zoom-animated{will-change:transform}
       </div>
     </div>
 
-    <div class="sec">
+    <div class="sec so">
       <div class="card" id="syncCard" style="scroll-margin-top:72px">
         <div class="card-head"><div><h3><span class="sn">1</span>선생님께 제출</h3><div class="sub">입력한 핀과 소감을 선생님 Google 시트로 보냅니다. 이름은 선생님만 볼 수 있어요</div></div><svg class="ic" viewBox="0 0 24 24" data-i="upload" style="color:var(--gold);width:22px;height:22px"></svg></div>
         <div class="sync">
@@ -574,7 +592,7 @@ svg.leaflet-zoom-animated{will-change:transform}
       </div>
     </div>
 
-    <div class="sec home-grid">
+    <div class="sec home-grid so">
       <div class="card">
         <div class="card-head"><div><h3>답사 당일 체크리스트</h3><div class="sub" id="ck-count">0 / 6 완료</div></div><span class="tag">이 기기에 저장</span></div>
         <div class="progress"><i id="ck-bar" style="width:0"></i></div>
@@ -593,7 +611,7 @@ svg.leaflet-zoom-animated{will-change:transform}
       </div>
     </div>
 
-    <footer class="foot"><span>구전남도청 AI 정보동아리 · 베이스라인 프로토타입</span><span>학생 학습 프로젝트이며 관리 기관의 공식 서비스가 아닙니다 · 지도 정보는 학생 실측값입니다</span></footer>
+    <footer class="foot"><span class="so">구전남도청 AI 정보동아리 · 베이스라인 프로토타입</span><span class="po">조선대학교부속고등학교 나우누리 × 알고리듬 · 2026. 10. 14. 현장 조사</span><span>학생 학습 프로젝트이며 관리 기관의 공식 서비스가 아닙니다 · 지도 정보는 학생 실측값입니다</span></footer>
   </section>
 
   <!-- ================= TRACK C ================= -->
@@ -609,7 +627,7 @@ svg.leaflet-zoom-animated{will-change:transform}
       </div>
     </div>
 
-    <div class="guide" style="margin-bottom:14px">
+    <div class="guide so" style="margin-bottom:14px">
       <div class="guide-head"><svg class="ic" viewBox="0 0 24 24" data-i="route"></svg>장소에 도착하면</div>
       <ol class="guide-steps">
         <li><span class="sn lg c">✓</span><p>아래 <b>새 현장 데이터 등록</b>에 기록해요<small><span class="sn">1</span>장소명·유형 → <span class="sn">2</span>단차·폭 → <span class="sn">3</span>사진 → <span class="sn">4</span>현재 위치 → <span class="sn">5</span>지도에 핀 추가</small></p><button class="btn btn-c" type="button" data-go="path|#pinForm|#f-name">기록하기</button></li>
@@ -645,7 +663,7 @@ svg.leaflet-zoom-animated{will-change:transform}
           <ul class="search-results" id="qResults" hidden></ul>
         </div>
 
-        <button class="docent-cta" type="button" id="openDocent">
+        <button class="docent-cta so" type="button" id="openDocent">
           <span class="dc-ic"><svg class="ic" viewBox="0 0 24 24" data-i="sparkle"></svg></span>
           <span><b>AI 시각 도슨트</b><small>현장 안내판·노면 사진을 AI가 분석해 말로 안내하는 시뮬레이터</small></span>
           <svg class="ic" viewBox="0 0 24 24" data-i="arrow"></svg>
@@ -656,13 +674,13 @@ svg.leaflet-zoom-animated{will-change:transform}
           <div class="places" id="places"></div>
         </div>
 
-        <div class="card lab">
+        <div class="card lab so">
           <div class="card-head"><h3>무계단 우회 경로</h3><span class="tag tag-todo">TODO 2</span></div>
           <p>본관 정문에서 상무관까지 계단을 피해 가는 길을 찾아 지도에 그립니다. 그래프 데이터는 준비되어 있고, 경로 탐색 함수를 직접 완성해야 해요.</p>
           <button class="btn btn-sm" type="button" id="routeBtn"><svg class="ic" viewBox="0 0 24 24" data-i="route"></svg>경로 찾기 실행</button>
         </div>
 
-        <form class="card form-stack" id="pinForm" novalidate style="scroll-margin-top:72px">
+        <form class="card form-stack so" id="pinForm" novalidate style="scroll-margin-top:72px">
           <div class="card-head" style="margin-bottom:0"><div><h3>새 현장 데이터 등록</h3><div class="sub">답사에서 기록한 내용을 입력하면 지도에 바로 핀이 생겨요</div></div><span class="tag" style="background:var(--c-soft);color:var(--c)">학생 실습</span></div>
           <label class="field"><span><span class="sn">1</span>장소명</span><input id="f-name" placeholder="예: 별관 뒤편 우회 경사로" maxlength="40"></label>
           <div class="field"><span class="field-label" id="f-type-label"><span class="sn">1</span>시설 유형</span><div class="radio-chips type-grid" id="f-type" role="radiogroup" aria-labelledby="f-type-label"></div></div>
@@ -690,7 +708,7 @@ svg.leaflet-zoom-animated{will-change:transform}
           <p class="err" id="f-err" hidden></p>
           <button class="btn btn-c btn-block" type="submit"><span class="sn">5</span>지도에 핀 추가</button>
         </form>
-        <div style="text-align:center"><button class="reset" type="button" id="resetPins">현장 데이터로 되돌리기</button></div>
+        <div class="so" style="text-align:center"><button class="reset" type="button" id="resetPins">현장 데이터로 되돌리기</button></div>
       </aside>
     </div>
   </section>
@@ -703,7 +721,7 @@ svg.leaflet-zoom-animated{will-change:transform}
       <p>구전남도청 방문객의 추모·평화 메시지를 모아 감정을 분석하는 아카이브입니다. 메시지를 남기면 모든 지표가 바로 다시 계산돼요.</p>
     </div>
 
-    <div class="guide" style="margin-bottom:14px">
+    <div class="guide so" style="margin-bottom:14px">
       <div class="guide-head"><svg class="ic" viewBox="0 0 24 24" data-i="route"></svg>이 화면에서 할 일 2가지</div>
       <ol class="guide-steps">
         <li><span class="sn lg d">A</span><p>소감 남기기<small><span class="sn">1</span>닉네임·세대 → <span class="sn">2</span>소감 한 문장 → <span class="sn">3</span>감성 분석 실행</small></p><button class="btn btn-d" type="button" data-go="echo|#msgForm|#m-name">쓰러 가기</button></li>
@@ -754,8 +772,8 @@ svg.leaflet-zoom-animated{will-change:transform}
       </div>
     </div>
 
-    <div class="d-grid">
-      <form class="card form-stack" id="msgForm" novalidate style="scroll-margin-top:72px">
+    <div class="d-grid pub1">
+      <form class="card form-stack so" id="msgForm" novalidate style="scroll-margin-top:72px">
         <div class="card-head" style="margin-bottom:0"><div><h3>현장 메시지 남기기</h3><div class="sub">답사에서 느낀 점을 한 줄로 남겨 주세요</div></div></div>
         <label class="field"><span><span class="sn">1</span>닉네임<em>실명 대신 별명</em></span><input id="m-name" placeholder="예: 빛고을 고1" maxlength="16"></label>
         <div class="field"><span class="field-label" id="m-gen-label"><span class="sn">1</span>세대</span><div class="radio-chips" id="m-gen" role="radiogroup" aria-labelledby="m-gen-label"></div></div>
@@ -778,9 +796,9 @@ svg.leaflet-zoom-animated{will-change:transform}
     </div>
 
     <div class="card" id="surveyCard" style="margin-top:12px;scroll-margin-top:72px">
-      <div class="card-head"><div><h3>현장 조사: 의견은 어떻게 모을까?</h3><div class="sub">구전남도청은 체험자·관광객의 의견과 후기를 어떻게 받고 있는지 찾아 기록해요</div></div><span class="tag" style="background:var(--d-soft);color:var(--d)">답사 과제</span></div>
-      <div class="d-grid" style="margin-top:0">
-        <form class="form-stack" id="surveyForm" novalidate>
+      <div class="card-head"><div><h3>현장 조사: 의견은 어떻게 모을까?</h3><div class="sub">구전남도청은 체험자·관광객의 의견과 후기를 어떻게 받고 있는지 찾아 기록해요</div></div><span class="tag so" style="background:var(--d-soft);color:var(--d)">답사 과제</span></div>
+      <div class="d-grid pub1" style="margin-top:0">
+        <form class="form-stack so" id="surveyForm" novalidate>
           <div class="field"><span class="field-label" id="sv-way-label"><span class="sn">1</span>찾은 방법 <em>여러 개 선택</em></span><div class="radio-chips" id="sv-ways" role="group" aria-labelledby="sv-way-label"></div></div>
           <label class="field"><span><span class="sn">2</span>어디서 봤나요?</span><input id="sv-where" placeholder="예: 본관 1층 안내데스크 옆" maxlength="60"></label>
           <label class="field"><span><span class="sn">3</span>관찰 메모</span><textarea id="sv-note" rows="3" maxlength="400" placeholder="무엇을 묻는지, 누가 쓰고 읽을 수 있는지, 쓰기 불편한 점, 직원에게 들은 답 등"></textarea></label>
@@ -803,11 +821,11 @@ svg.leaflet-zoom-animated{will-change:transform}
       </div>
     </div>
 
-    <div class="card lab" style="margin-top:12px">
+    <div class="card lab so" style="margin-top:12px">
       <div class="card-head"><div><h3>세대별 오월 정신 인식 비교</h3><div class="sub">지금은 세대별 메시지 수만 셉니다. 감정 점수를 교차해 차트로 만들어 보세요.</div></div><span class="tag tag-todo">TODO 3</span></div>
       <div class="xt-wrap"><table class="xt" id="xtab"></table></div>
     </div>
-    <div style="text-align:center;margin-top:10px"><button class="reset" type="button" id="resetMsgs">현장 소감으로 되돌리기</button></div>
+    <div class="so" style="text-align:center;margin-top:10px"><button class="reset" type="button" id="resetMsgs">현장 소감으로 되돌리기</button></div>
   </section>
 </main>
 
@@ -1993,6 +2011,7 @@ function renderSync() {
   $('#sync-btn').lastChild.textContent = syncing ? '제출 중…' : '지금 제출';
 }
 async function submitAll(silent, hint) {
+  if (document.body.classList.contains('public')) return;
   const list = pendingItems();
   if (!list.length) { if (!silent) toast('새로 보낼 기록이 없어요'); renderSync(); return; }
   if (inArtifactView || !SUBMIT_URL) { if (!silent) toast('지금 화면에서는 제출할 수 없어요. 기록은 이 휴대폰에 보관돼요'); return; }
