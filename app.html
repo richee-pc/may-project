@@ -1365,7 +1365,7 @@ $('#pinForm').addEventListener('submit', e => {
   pins.push(p); savePins();
   if (pinFilter !== 'all' && TYPES[type].group !== pinFilter) setFilter('all');
   renderPath(p.id);
-  renderSync(); submitAll(true);
+  renderSync(); submitAll(true, true);
   if (tempMarker && map) { map.removeLayer(tempMarker); tempMarker = null; }
   $('#pinForm').reset(); formPhoto = '';
   $('#f-photo-prev').innerHTML = icon('camera');
@@ -1829,7 +1829,7 @@ $('#msgForm').addEventListener('submit', e => {
   requestAnimationFrame(() => requestAnimationFrame(() => $$('#anaOut .bar').forEach((b, i) => { $('i', b).style.width = a.scores[EMO[i].key] + '%'; })));
   $('#m-text').value = '';
   renderEcho(m.id);
-  renderSync(); submitAll(true);
+  renderSync(); submitAll(true, true);
   toast('메시지를 아카이브에 추가했어요');
 });
 $('#resetMsgs').addEventListener('click', e => armButton(e.currentTarget, '한 번 더 누르면 초기화', () => {
@@ -1862,7 +1862,7 @@ $('#surveyForm').addEventListener('submit', e => {
   surveys.push({ id: 's' + Date.now().toString(36), ways, where: $('#sv-where').value.trim(), note, idea: $('#sv-idea').value.trim(), photo: svPhoto, at: Date.now() });
   saveSurveys();
   $('#surveyForm').reset(); svPhoto = ''; $('#sv-photo-prev').innerHTML = icon('camera');
-  renderSurveys(); renderSync(); submitAll(true);
+  renderSurveys(); renderSync(); submitAll(true, true);
   toast('조사 기록을 저장했어요');
 });
 $('#surveyList').addEventListener('click', e => {
@@ -1962,12 +1962,13 @@ function renderSync() {
   $('#sync-btn').disabled = syncing;
   $('#sync-btn').lastChild.textContent = syncing ? '제출 중…' : '지금 제출';
 }
-async function submitAll(silent) {
+async function submitAll(silent, hint) {
   const list = pendingItems();
   if (!list.length) { if (!silent) toast('새로 보낼 기록이 없어요'); renderSync(); return; }
   if (inArtifactView || !SUBMIT_URL) { if (!silent) toast('지금 화면에서는 제출할 수 없어요. 기록은 이 휴대폰에 보관돼요'); return; }
   if (!syncCfg.code || !syncCfg.name) {
     if (!silent) { toast('반 코드와 이름을 먼저 입력해 주세요'); location.hash = 'home'; setTimeout(() => $('#sync-code').focus(), 300); }
+    else if (hint) setTimeout(() => toast('아직 제출 안 됐어요! 홈의 "선생님께 제출" 칸에 반 코드와 이름을 넣어 주세요'), 1800);
     return;
   }
   if (syncing) return;
@@ -2002,6 +2003,8 @@ async function submitAll(silent) {
 $('#sync-btn').addEventListener('click', () => submitAll(false));
 addEventListener('online', () => submitAll(true));
 document.addEventListener('visibilitychange', () => { if (!document.hidden) submitAll(true); });
+// 제출이 잠깐 실패해도(신호 약함, 동시 제출) 화면이 켜져 있는 동안 30초마다 다시 보내요
+setInterval(() => { if (!document.hidden && pendingItems().length) submitAll(true); }, 30000);
 
 /* 안내 바로가기: data-go="화면|강조할 영역|커서를 둘 칸" */
 document.addEventListener('click', e => {
