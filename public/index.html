@@ -270,6 +270,26 @@ body.public .d-grid.pub1{grid-template-columns:minmax(0,1fr)}
 .info dt{color:var(--ink-3);font-weight:600}
 .info dd{margin:0;color:var(--ink-2)}
 .info a{color:var(--c)}
+.bld-loc{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12.5px;color:var(--ink-3);margin-bottom:12px}
+.bld-loc .tag{font-weight:600}
+.floors{display:flex;flex-direction:column;gap:0;border:1.5px solid var(--ink);border-radius:14px 14px 6px 6px;overflow:hidden;margin-bottom:12px}
+.floor{display:grid;grid-template-columns:52px minmax(0,1fr);border-top:1px solid var(--line);min-height:44px}
+.floor:first-child{border-top:0}
+.floor .fl{display:grid;place-items:center;background:var(--ink);color:var(--bg);font-family:var(--f-mono);font-size:12px;font-weight:600}
+.floor.under .fl{background:var(--ink-3)}
+.floor.roof .fl{background:var(--c)}
+.floor .rooms{display:flex;flex-wrap:wrap;gap:5px;padding:8px;background:repeating-linear-gradient(90deg,var(--surface),var(--surface) 28px,var(--bg) 28px,var(--bg) 30px)}
+.room{font-size:12.5px;padding:4px 9px;border-radius:8px;background:var(--surface);border:1px solid var(--line);color:var(--ink);line-height:1.35}
+.ground{height:8px;background:repeating-linear-gradient(135deg,var(--line),var(--line) 4px,transparent 4px,transparent 8px);margin:-12px 0 12px;border-radius:0 0 6px 6px}
+.facs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.facs span{font-size:12.5px;font-weight:600;padding:4px 10px;border-radius:999px;background:var(--c-soft);color:var(--c)}
+.facs span.miss{background:var(--gold-soft);color:var(--gold)}
+.bld-sec{font-size:13px;font-weight:700;margin:6px 0 6px;color:var(--ink-2)}
+.bld-pins{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.bld-pins button{display:flex;justify-content:space-between;align-items:center;gap:8px;text-align:left;border:1px solid var(--line);background:var(--bg);border-radius:12px;padding:8px 10px;font-size:13.5px;cursor:pointer;color:var(--ink)}
+.bld-pin-icon{background:none;border:0}
+.bpin{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--ink);color:var(--bg);font-family:var(--f-mono);font-weight:700;font-size:14px;border:3px solid var(--surface);box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.bpin.est{background:var(--ink-3)}
 .foot{margin-top:34px;padding-top:16px;border-top:1px solid var(--line);font-size:12px;color:var(--ink-3);display:flex;flex-wrap:wrap;gap:6px 16px;justify-content:space-between}
 
 /* ---------- Track C: map ---------- */
@@ -719,7 +739,7 @@ svg.leaflet-zoom-animated{will-change:transform}
         </button>
 
         <div class="card">
-          <div class="card-head"><div><h3>관람 동선 · 건물별 조사 현황</h3><div class="sub">건물을 누르면 그 건물의 장소만 보여요. 비어 있는 건물은 정보를 보태 주세요</div></div></div>
+          <div class="card-head"><div><h3>관람 동선 · 건물별 조사 현황</h3><div class="sub">건물을 누르면 층별 안내와 위치, 조사한 곳을 볼 수 있어요</div></div></div>
           <ol class="route" id="route"></ol>
         </div>
 
@@ -917,6 +937,18 @@ svg.leaflet-zoom-animated{will-change:transform}
 </div>
 
 <!-- 데이터 내보내기 -->
+<div class="sheet" id="sheet-bld" hidden role="dialog" aria-modal="true" aria-labelledby="bld-title">
+  <div class="sheet-backdrop" data-close></div>
+  <div class="sheet-panel">
+    <div class="sheet-grip"></div>
+    <div class="sheet-head">
+      <div><span class="eyebrow" style="color:var(--c)" id="bld-eyebrow">관람 동선</span><h2 id="bld-title">건물 안내</h2><p class="muted" id="bld-about" style="font-size:13.5px;margin-top:2px"></p></div>
+      <button class="icon-btn" type="button" data-close aria-label="닫기"><svg class="ic" viewBox="0 0 24 24" data-i="close"></svg></button>
+    </div>
+    <div id="bld-body"></div>
+  </div>
+</div>
+
 <div class="sheet" id="sheet-export" hidden role="dialog" aria-modal="true" aria-labelledby="export-title">
   <div class="sheet-backdrop" data-close></div>
   <div class="sheet-panel">
@@ -1156,13 +1188,48 @@ let pinFilter = 'all';
 let bldFilter = 0;   // 0 = 모든 건물
 // 옛 전남도청 관람 동선 (현장 팸플릿 2026.10 기준)
 const BUILDINGS = [
-  { n: 1, name: '도청 본관', about: '열흘간의 항쟁 서사 전시 · 마지막 항전지', fac: '' },
-  { n: 2, name: '도경찰국 본관', about: '5·18 테마 전시 · 민주주의 역사실', fac: '화장실' },
-  { n: 3, name: '도경찰국 민원실', about: '기획전시실 · 5·18 휴게 라운지', fac: '화장실' },
-  { n: 4, name: '도청 회의실', about: '시민군 무기고 · 열린 도서관', fac: '화장실' },
-  { n: 5, name: '상무관', about: '희생자 추모 공간', fac: '화장실' },
-  { n: 6, name: '도청 별관', about: '방문자센터 · 복원역사실 · 야외쉼터', fac: '방문자센터 · 화장실' }
+  { n: 1, name: '도청 본관', about: '열흘간의 항쟁 서사 전시 · 마지막 항전지', fac: '',
+    lat: 35.147053, lng: 126.920044, loc: 'map',
+    floors: [
+      ['3F', ['상황실', '도지사 비서실', '도지사 접견실 (협상 장소 재현)', '도지사실']],
+      ['2F', ['부지사실 (시민수습대책위원회)', '보사·식산국장실', '상공국장실 (기자회견장 재현)', '기획관리실장실', '내무국장·새마을상황실']],
+      ['1F', ['지방과 (열흘간의 항쟁 이야기)', '서무과 인사계 (시민자치)', '서무과 서무계 (시민군 상황실·방송실 재현)']]
+    ] },
+  { n: 2, name: '도경찰국 본관', about: '5·18 테마 전시 · 민주주의 역사실', fac: '화장실',
+    lat: 35.146873, lng: 126.919631, loc: 'student',
+    floors: [
+      ['2F', ['구술영상기록실', '오월이야기 소통실', '경찰국장실']],
+      ['1F', ['5·18 민주주의 역사실', '주제영상실']]
+    ] },
+  { n: 3, name: '도경찰국 민원실', about: '기획전시실 · 5·18 휴게 라운지', fac: '화장실',
+    lat: 35.146466, lng: 126.920948, loc: 'student',
+    floors: [
+      ['2F', ['5·18 휴게 라운지']],
+      ['1F', ['기획전시실', '5·18 당시 희생자 입관 장소']]
+    ] },
+  { n: 4, name: '도청 회의실', about: '시민군 무기고 · 열린 도서관', fac: '화장실',
+    lat: null, lng: null, loc: '',
+    floors: [
+      ['2F', ['대회의실 (시민들의 쉼터)']],
+      ['1F', ['열린 도서관 (열람실·자료검색실)']],
+      ['B1', ['시민군 무기고 재현']]
+    ] },
+  { n: 5, name: '상무관', about: '희생자 추모 공간', fac: '화장실',
+    lat: 35.148013, lng: 126.920016, loc: 'map',
+    floors: [
+      ['1F', ['추모 공간 (희생자들이 임시로 안치되었던 곳)']]
+    ] },
+  { n: 6, name: '도청 별관', about: '방문자센터 · 복원역사실 · 야외쉼터', fac: '방문자센터 · 화장실 · 수유실 · 물품보관함',
+    lat: 35.146737, lng: 126.919394, loc: 'map',
+    floors: [
+      ['옥상', ['야외쉼터']],
+      ['3F', ['교육체험실', '세미나실']],
+      ['2F', ['복원역사실', '건축역사실']],
+      ['1F', ['방문자 센터 (관람·해설 안내)', '물품보관함 · 수유실']]
+    ] }
 ];
+// 야외 전시 (팸플릿 기준, 위치는 아직 조사 전)
+const OUTDOOR = ['옛 전남도청 행정안내실', '은행나무와 총탄 흔적', '시민군 지프차', '울림의 통로'];
 const bldName = n => (BUILDINGS.find(b => b.n === n) || {}).name || '';
 let map = null, markerLayer = null, schematicLayer = null, tileLayer = null, routeLayer = null, tempMarker = null;
 const markers = {};
@@ -1206,7 +1273,8 @@ const visiblePins = () => pins.filter(p => (pinFilter === 'all' || TYPES[p.type]
 
 function renderPlaces() {
   const list = visiblePins();
-  $('#placeCount').textContent = `${list.length}곳 표시 중${bldFilter ? ' · ' + bldName(bldFilter) : ''}`;
+  $('#placeCount').textContent = `${list.length}곳 표시 중${bldFilter ? ' · ' + bldName(bldFilter) + ' (눌러서 전체 보기)' : ''}`;
+  $('#placeCount').style.cursor = bldFilter ? 'pointer' : '';
   $('#places').innerHTML = list.length ? list.map(p => {
     const t = TYPES[p.type];
     return `<div class="place" data-id="${p.id}">
@@ -1291,22 +1359,66 @@ function renderRoute() {
 }
 $('#route').addEventListener('click', e => {
   const b = e.target.closest('[data-bld]'); if (!b) return;
-  const n = Number(b.dataset.bld);
-  bldFilter = bldFilter === n ? 0 : n;
-  renderPath();
-  const list = visiblePins();
-  if (bldFilter && !list.length) {
-    toast(`${bldName(n)}은(는) 아직 조사된 곳이 없어요. 아래 폼으로 정보를 보태 주세요`);
-    $('#f-name').value = bldName(n) + ' ';
-    bldFilter = 0; renderPath();
-    $('#pinForm').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+  showBuilding(Number(b.dataset.bld));
+});
+
+/* 건물 안내 창: 층별 안내도(팸플릿 사실 정보를 바탕으로 직접 그림) + 위치 + 조사한 장소 */
+function showBuilding(n) {
+  const b = BUILDINGS.find(x => x.n === n); if (!b) return;
+  const list = pins.filter(p => p.bld === n);
+  const locTag = b.loc === 'map' ? '<span class="tag">지도 데이터(OpenStreetMap) 기준</span>'
+    : b.loc === 'student' ? '<span class="tag">학생 실측 위치 기준 · 오차 있을 수 있음</span>'
+    : '<span class="tag tag-todo">위치 확인 필요</span>';
+  const floorRow = ([f, rooms]) => `<div class="floor${f.startsWith('B') ? ' under' : f === '옥상' ? ' roof' : ''}"><span class="fl">${f}</span><div class="rooms">${rooms.map(r => `<span class="room">${esc(r)}</span>`).join('')}</div></div>`;
+  const facs = (b.fac ? b.fac.split(' · ') : []).map(f => `<span>${esc(f)}</span>`).join('') + '<span class="miss">엘리베이터·경사로 위치 조사 필요</span>';
+  $('#bld-eyebrow').textContent = `관람 동선 ${n} / 6`;
+  $('#bld-title').textContent = `${'①②③④⑤⑥'[n - 1]} ${b.name}`;
+  $('#bld-about').textContent = b.about;
+  $('#bld-body').innerHTML = `
+    <div class="bld-loc">${locTag}${b.lat ? `<button class="btn btn-sm" type="button" data-bldmap="${n}">${icon('pin')}지도에서 위치 보기</button>` : ''}</div>
+    <div class="bld-sec">층별 안내</div>
+    <div class="floors">${b.floors.map(floorRow).join('')}</div>
+    <div class="ground" aria-hidden="true"></div>
+    <div class="bld-sec">편의시설 <span style="font-weight:500;color:var(--ink-3)">(팸플릿 기준)</span></div>
+    <div class="facs">${facs}</div>
+    <div class="bld-sec">이 건물에서 조사한 곳 ${list.length}곳</div>
+    <div class="bld-pins">${list.length ? list.map(p => `<button type="button" data-bldpin="${p.id}"><span>${esc(p.name)}</span>${signalHTML(grade(p))}</button>`).join('') : '<p class="muted" style="font-size:13px">아직 조사된 곳이 없어요. 경사로·계단·화장실 정보를 보태 주세요.</p>'}</div>
+    ${n === 6 ? `<div class="bld-sec">야외 전시 (위치 조사 전)</div><div class="facs">${OUTDOOR.map(o => `<span class="miss">${esc(o)}</span>`).join('')}</div>` : ''}
+    <div class="sheet-actions">
+      <button class="btn btn-c" type="button" data-bldadd="${n}">${icon('plus')}이 건물 정보 보태기</button>
+      ${list.length ? `<button class="btn" type="button" data-bldfilter="${n}">${icon('map')}이 건물 장소만 보기</button>` : ''}
+    </div>
+    <p class="note">층별 안내는 옛 전남도청 현장 팸플릿(2026.10)의 내용을 바탕으로 다시 그린 그림이에요. 실제 전시는 바뀔 수 있어요.</p>`;
+  hydrateIcons($('#bld-body'));
+  openSheet('sheet-bld');
+}
+function focusBuilding(n, onlyPins) {
+  const b = BUILDINGS.find(x => x.n === n);
+  closeSheet('sheet-bld');
+  if (location.hash !== '#path') location.hash = 'path';
+  setTimeout(() => {
+    ensureMap(); if (!map) return;
+    if (onlyPins) { bldFilter = n; renderPath(); }
+    const pts = (onlyPins ? visiblePins().map(p => [p.lat, p.lng]) : []).concat(b && b.lat ? [[b.lat, b.lng]] : []);
+    if (innerWidth < 900) $('#mapWrap').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' });
+    if (pts.length === 1) map.flyTo(pts[0], 19, { duration: reduceMotion ? 0 : .8 });
+    else if (pts.length) map.flyToBounds(L.latLngBounds(pts).pad(0.4), { maxZoom: 19, duration: reduceMotion ? 0 : .8 });
+  }, 250);
+}
+document.addEventListener('click', e => {
+  const m = e.target.closest('[data-bldmap]'); if (m) { focusBuilding(Number(m.dataset.bldmap), false); return; }
+  const f = e.target.closest('[data-bldfilter]'); if (f) { focusBuilding(Number(f.dataset.bldfilter), true); return; }
+  const pp = e.target.closest('[data-bldpin]'); if (pp) { closeSheet('sheet-bld'); focusPin(pp.dataset.bldpin); return; }
+  const a = e.target.closest('[data-bldadd]');
+  if (a) {
+    const n = Number(a.dataset.bldadd); closeSheet('sheet-bld');
+    if (location.hash !== '#path') location.hash = 'path';
+    setTimeout(() => { $('#f-name').value = bldName(n) + ' '; $('#pinForm').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' }); $('#f-name').focus({ preventScroll: true }); }, 300);
     return;
   }
-  if (map && list.length) {
-    if (innerWidth < 900) $('#mapWrap').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' });
-    map.flyToBounds(L.latLngBounds(list.map(p => [p.lat, p.lng])).pad(0.4), { maxZoom: 19, duration: reduceMotion ? 0 : .8 });
-  }
 });
+// 목록에서 건물 필터를 풀 수 있게
+$('#placeCount').addEventListener('click', () => { if (bldFilter) { bldFilter = 0; renderPath(); } });
 function setFilter(f) {
   pinFilter = f;
   $$('#filters .chip').forEach(c => c.setAttribute('aria-pressed', c.dataset.filter === f ? 'true' : 'false'));
@@ -1368,6 +1480,13 @@ function ensureMap() {
   schematicLayer = buildSchematic();
   setTiles();
   markerLayer = L.layerGroup().addTo(map);
+  // 건물 번호 표시 (누르면 건물 안내)
+  BUILDINGS.filter(b => b.lat).forEach(b => {
+    L.marker([b.lat, b.lng], {
+      title: b.name, keyboard: true, zIndexOffset: -500,
+      icon: L.divIcon({ className: 'bld-pin-icon', html: `<span class="bpin${b.loc === 'student' ? ' est' : ''}" data-bldmarker="${b.n}">${b.n}</span>`, iconSize: [30, 30], iconAnchor: [15, 15] })
+    }).addTo(map).on('click', () => showBuilding(b.n));
+  });
   routeLayer = L.layerGroup().addTo(map);
   map.on('click', e => { if (pickMode) setFormLoc(e.latlng.lat, e.latlng.lng, true); });
   renderMarkers();
