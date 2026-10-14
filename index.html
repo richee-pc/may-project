@@ -690,7 +690,7 @@ svg.leaflet-zoom-animated{will-change:transform}
           <p class="err" id="f-err" hidden></p>
           <button class="btn btn-c btn-block" type="submit"><span class="sn">5</span>지도에 핀 추가</button>
         </form>
-        <div style="text-align:center"><button class="reset" type="button" id="resetPins">샘플 데이터로 되돌리기</button></div>
+        <div style="text-align:center"><button class="reset" type="button" id="resetPins">현장 데이터로 되돌리기</button></div>
       </aside>
     </div>
   </section>
@@ -807,7 +807,7 @@ svg.leaflet-zoom-animated{will-change:transform}
       <div class="card-head"><div><h3>세대별 오월 정신 인식 비교</h3><div class="sub">지금은 세대별 메시지 수만 셉니다. 감정 점수를 교차해 차트로 만들어 보세요.</div></div><span class="tag tag-todo">TODO 3</span></div>
       <div class="xt-wrap"><table class="xt" id="xtab"></table></div>
     </div>
-    <div style="text-align:center;margin-top:10px"><button class="reset" type="button" id="resetMsgs">샘플 메시지로 되돌리기</button></div>
+    <div style="text-align:center;margin-top:10px"><button class="reset" type="button" id="resetMsgs">현장 소감으로 되돌리기</button></div>
   </section>
 </main>
 
@@ -1025,35 +1025,55 @@ const TYPES = {
   elevator: { label: '승강기 · 휠체어 리프트', group: 'smooth',  color: 'blue',   icon: 'elevator' },
   flat:     { label: '평탄 보행로 · 점자블록', group: 'smooth',  color: 'blue',   icon: 'braille' },
   step:     { label: '단차 주의',              group: 'caution', color: 'orange', icon: 'warn' },
-  stairs:   { label: '계단 + 우회 경사로',     group: 'caution', color: 'yellow', icon: 'stairs' },
+  stairs:   { label: '계단',     group: 'caution', color: 'yellow', icon: 'stairs' },
   toilet:   { label: '장애인 화장실',          group: 'amenity', color: 'violet', icon: 'toilet' },
   rest:     { label: '휴게 · 편의시설',        group: 'amenity', color: 'violet', icon: 'rest' }
 };
 /* 썸네일용 고정 색 (data URI 안에서는 CSS 변수를 쓸 수 없어요) */
 const PIN_HEX = { green: '#2C9657', blue: '#2F68CC', orange: '#DD6F1B', yellow: '#C99604', violet: '#8550C4' };
 
-// [TODO for Students 1]: 현장 답사 후 측정한 실제 GPS 좌표와 실측 단차(cm)로 교체하기
-//   - 아래 좌표는 지도에서 눈으로 맞춘 '추정값'입니다.
-//   - 스마트폰 사진의 GPS 정보(EXIF) 또는 지도 앱의 좌표를 확인해 lat, lng 를 바꾸세요.
-//   - step(단차)과 width(폭)는 줄자로 잰 값을 cm 단위로 적습니다.
+// 2026-10-14 현장 탐구에서 학생들이 직접 잰 값입니다 (지도교사 1차 검수 통과 17건).
+// [TODO for Students 1]: 위치가 기록되지 않았거나 튄 13건을 다시 재서 아래에 추가해 보세요.
+//   - 시트의 '핀' 탭에서 검수 'X' 인 줄이 재측정 대상입니다.
 const SAMPLE_PINS = [
-  { id: 'p1', naver: '옛 전남도청', name: '구전남도청 본관 정문 출입로', type: 'ramp', lat: 35.14662, lng: 126.92046, step: 0, width: 180,
-    desc: '정문 앞 화강석 경사로. 기울기가 완만하고 양쪽에 손잡이가 있어 휠체어와 유모차 모두 혼자 진입할 수 있습니다.' },
-  { id: 'p2', naver: '5·18민주광장', name: '5·18 민주광장 분수대 진입로', type: 'step', lat: 35.14690, lng: 126.92112, step: 3, width: 200,
-    desc: '보도블록 틈새가 벌어진 구간이 있어 앞바퀴가 걸릴 수 있습니다. 분수대 서쪽 평탄 구간으로 돌아가면 안전합니다.' },
-  { id: 'p3', naver: '옛 전남도청', name: '구전남도청 별관 연결 통로', type: 'elevator', lat: 35.14628, lng: 126.92078, step: 1, width: 110,
-    desc: '본관과 별관을 잇는 통로. 계단 옆 휠체어 리프트와 엘리베이터가 이어지며, 리프트는 호출 버튼으로 작동합니다.' },
-  { id: 'p4', naver: '광주 상무관', name: '상무관 입구', type: 'stairs', lat: 35.14748, lng: 126.92086, step: 15, width: 120,
-    desc: '정면은 석조 계단 3단(단 높이 약 15cm). 오른쪽 목재 우회 경사로로 휠체어 진입이 가능합니다.' },
-  { id: 'p5', naver: '국립아시아문화전당', name: '국립아시아문화전당(ACC) 지상-지하 EV 탑승장', type: 'elevator', color: 'green', lat: 35.14598, lng: 126.91975, step: 0, width: 160,
-    desc: '지상 광장과 지하 문화창조원을 잇는 엘리베이터·에스컬레이터. 문턱이 없고 버튼이 낮아 휠체어 이용자도 바로 누를 수 있습니다.' },
-  { id: 'p6', naver: '5·18민주광장 시계탑', name: '민주광장 시계탑 주변 보행로', type: 'flat', lat: 35.14722, lng: 126.92168, step: 0, width: 300,
-    desc: '평탄한 노면에 시각장애인 점자블록이 끊김 없이 이어집니다. 매일 오후 5시 18분 시계탑에서 「임을 위한 행진곡」이 울립니다.' },
-  { id: 'p7', naver: '국립아시아문화전당', name: 'ACC 장애인 화장실 (지하 1층)', type: 'toilet', lat: 35.14575, lng: 126.91945, step: 0, width: 90,
-    desc: '자동문, 비상벨, 손잡이를 갖춘 장애인 화장실. EV 탑승장에서 약 40m 거리입니다.' }
+  { id: 'umv7pjxii', naver: '옛 전남도청', name: '본관 정문', type: 'flat', lat: 35.1473523, lng: 126.9196363, step: 0, width: 200,
+    desc: '' },
+  { id: 'umv7q7pse', naver: '옛 전남도청', name: '옛 전라남도청 본관', type: 'ramp', lat: 35.1468857, lng: 126.9200103, step: 10, width: '',
+    desc: '' },
+  { id: 'umv7q8pc3', naver: '옛 전남도청', name: '옛 전남도청 본관', type: 'ramp', lat: 35.14674371, lng: 126.9193874, step: 35, width: 160,
+    desc: '' },
+  { id: 'umv7qdnit', naver: '옛 전남도청', name: '본관 2층 맨 끝', type: 'ramp', lat: 35.1473018, lng: 126.9196743, step: 0, width: 120,
+    desc: '' },
+  { id: 'umv7qo4to', naver: '옛 전남도청', name: '본관 계단', type: 'stairs', lat: 35.1470188, lng: 126.9200348, step: 100, width: 250,
+    desc: '계단이 너무 높아 장애인이나 몸이 불편한 분은 올라가기 어려움. 옆 안전바도 낡아 관리가 필요함' },
+  { id: 'umv7qo6m9', naver: '옛 전남도청', name: '본관 입구 계단', type: 'stairs', lat: 35.14701999, lng: 126.9199097, step: 12, width: 153,
+    desc: '깨진 부분이 있음' },
+  { id: 'umv7quh05', naver: '옛 전남도청', name: '옛 전라남도경찰국 본관', type: 'ramp', lat: 35.1465289, lng: 126.9193383, step: 0, width: '',
+    desc: '' },
+  { id: 'umv7quv3w', naver: '옛 전남도청', name: '경찰국 본관 입구', type: 'stairs', lat: 35.1471234, lng: 126.9193383, step: 0, width: 300,
+    desc: '' },
+  { id: 'umv7qwjer', naver: '옛 전남도청', name: '경찰국 앞 길', type: 'ramp', lat: 35.14708914, lng: 126.9193258, step: 0, width: 356,
+    desc: '' },
+  { id: 'umv7qxovm', naver: '옛 전남도청', name: '경찰국 정문 옆', type: 'elevator', lat: 35.14701506, lng: 126.91915, step: 0, width: 600,
+    desc: '' },
+  { id: 'umv7r6e00', naver: '옛 전남도청', name: '경찰국 본관', type: 'ramp', lat: 35.1467875, lng: 126.9199198, step: 0, width: '',
+    desc: '손잡이가 있음' },
+  { id: 'umv7r794x', naver: '옛 전남도청', name: '경찰국 본관 화장실', type: 'toilet', lat: 35.1465476, lng: 126.9192789, step: 0, width: '',
+    desc: '' },
+  { id: 'umv7r7jkm', naver: '옛 전남도청', name: '경찰국 본관 장애인 화장실', type: 'toilet', lat: 35.14703946, lng: 126.9204774, step: 0, width: '',
+    desc: '관리가 잘 되어 있음' },
+  { id: 'umv7r8yey', naver: '옛 전남도청', name: '경찰국 종합민원실', type: 'stairs', lat: 35.1465404, lng: 126.9206706, step: 0, width: '',
+    desc: '' },
+  { id: 'umv7r92ub', naver: '옛 전남도청', name: '민원실', type: 'ramp', lat: 35.1464294, lng: 126.9210865, step: 0, width: 100,
+    desc: '' },
+  { id: 'umv7razoj', naver: '옛 전남도청', name: '물 마시는 곳', type: 'rest', lat: 35.14642865, lng: 126.9210872, step: 0, width: '',
+    desc: '' },
+  { id: 'umv7rqcak', naver: '옛 전남도청', name: '전라남도경찰국', type: 'ramp', lat: 35.14685562, lng: 126.9202226, step: 0, width: 350,
+    desc: '노면이 잘 정리되어 매끈함. 휠체어 이용자도 쉽게 이동 가능' }
 ];
 
-let pins = store.get('may.pins.v1', null) || structuredClone(SAMPLE_PINS);
+const BASE_PIN_IDS = new Set(SAMPLE_PINS.map(p => p.id));
+let pins = [...structuredClone(SAMPLE_PINS), ...store.get('may.pins.v1', []).filter(p => p.user && !BASE_PIN_IDS.has(p.id))];
 let pinFilter = 'all';
 let map = null, markerLayer = null, schematicLayer = null, tileLayer = null, routeLayer = null, tempMarker = null;
 const markers = {};
@@ -1066,7 +1086,7 @@ const fmtCm = v => (v === '' || v == null || isNaN(v)) ? '-' : (+v % 1 ? (+v).to
 function grade(p) {
   const g = TYPES[p.type].group;
   if (g === 'amenity') return { lv: 0, label: '이용 가능' };
-  if (p.type === 'stairs') return { lv: 1, label: '우회 필요' };
+  if (p.type === 'stairs') return { lv: 1, label: '우회로 확인 필요' };
   const s = +p.step || 0;
   if (s <= 1) return { lv: 0, label: '원활' };
   if (s <= 3) return { lv: 1, label: '주의' };
@@ -1104,7 +1124,7 @@ function renderPlaces() {
       <img src="${esc(thumb(p))}" alt="" loading="lazy" data-focus="${p.id}" style="cursor:pointer">
       <div class="place-main" data-focus="${p.id}" role="button" tabindex="0" aria-label="${esc(p.name)} 지도에서 보기">
         <b>${esc(p.name)}</b>
-        <span>${p.user ? (p.sent ? '<span class="user-tag">제출 완료</span>' : '<span class="user-tag wait">제출 대기</span>') : '<span class="user-tag ex">예시</span>'}${esc(t.label)} · 단차 ${fmtCm(p.step)}cm</span>
+        <span>${p.user ? (p.sent ? '<span class="user-tag">제출 완료</span>' : '<span class="user-tag wait">제출 대기</span>') : '<span class="user-tag ex">10.14 실측</span>'}${esc(t.label)} · 단차 ${fmtCm(p.step)}cm</span>
       </div>
       <div class="place-side">${signalHTML(grade(p))}${p.user ? `<button class="place-del" type="button" data-del="${p.id}">${icon('trash')}삭제</button>` : ''}</div>
     </div>`;
@@ -1115,7 +1135,7 @@ function popupHTML(p) {
   const t = TYPES[p.type];
   return `<div class="pp">
     <img class="pp-img" src="${esc(thumb(p))}" alt="${esc(p.name)} 사진">
-    <div class="pp-top">${signalHTML(grade(p))}<span class="pp-type">${esc(t.label)}${p.user ? '' : ' · 예시 데이터'}</span></div>
+    <div class="pp-top">${signalHTML(grade(p))}<span class="pp-type">${esc(t.label)}${p.user ? '' : ' · 학생 실측(10.14)'}</span></div>
     <h4>${esc(p.name)}</h4>
     <div class="pp-nums"><div><small>실측 단차</small><b>${fmtCm(p.step)}<i>cm</i></b></div><div><small>통로 폭</small><b>${fmtCm(p.width)}<i>cm</i></b></div></div>
     <p>${esc(p.desc || '상세 설명이 없습니다.')}</p>
@@ -1386,7 +1406,7 @@ $('#pinForm').addEventListener('submit', e => {
   focusPin(p.id);
 });
 $('#resetPins').addEventListener('click', e => armButton(e.currentTarget, '한 번 더 누르면 초기화', () => {
-  pins = structuredClone(SAMPLE_PINS); savePins(); if (routeLayer) routeLayer.clearLayers(); setFilter('all'); toast('샘플 데이터로 되돌렸어요');
+  pins = structuredClone(SAMPLE_PINS); savePins(); if (routeLayer) routeLayer.clearLayers(); setFilter('all'); toast('현장 데이터로 되돌렸어요');
 }));
 
 // [TODO for Students 2]: 다익스트라(Dijkstra) 또는 A* 알고리즘을 활용한 무계단 우회 경로 선 긋기(Polyline) 구현해보기
@@ -1432,21 +1452,21 @@ $('#routeBtn').addEventListener('click', () => {
 const svgURI = s => 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(s);
 const SCENES = [
   {
-    id: 's1', label: '본관 앞 경사로', pin: 'p1',
+    id: 's1', label: '본관 앞 경사로', pin: 'umv7q7pse',
     img: svgURI(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 200"><rect width="320" height="200" fill="#CFE0EA"/><rect y="34" width="320" height="110" fill="#E8E1CF"/><rect y="34" width="320" height="10" fill="#D6CDB7"/><g fill="#6E7C8A">${[24, 74, 124, 174, 224, 274].map(x => `<rect x="${x}" y="58" width="22" height="30" rx="2"/><rect x="${x}" y="100" width="22" height="30" rx="2"/>`).join('')}</g><rect x="138" y="96" width="44" height="48" fill="#5B4A3A"/><rect y="144" width="320" height="56" fill="#B8B2A5"/><polygon points="40,186 250,148 250,160 40,198" fill="#9A9488"/><path d="M40 172 L250 136" stroke="#3E3E3E" stroke-width="3"/><path d="M40 172v14M145 154v14M250 136v14" stroke="#3E3E3E" stroke-width="2"/></svg>`),
     boxes: [{ x: 11, y: 70, w: 68, h: 30, t: '경사로 · 단차 1cm 미만' }, { x: 11, y: 64, w: 68, h: 9, t: '손잡이' }],
     tags: ['경사로', '단차 < 1cm', '폭 약 180cm', '손잡이 있음'],
     text: '이곳은 구전남도청 본관 앞 경사로이며, 단차는 1cm 미만으로 휠체어 진입이 매우 원활합니다. 경사로 폭은 약 180센티미터이고 양쪽에 손잡이가 있습니다.'
   },
   {
-    id: 's2', label: '분수대 보도블록', pin: 'p2',
+    id: 's2', label: '분수대 보도블록', pin: null,
     img: svgURI(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 200"><defs><pattern id="p" width="28" height="14" patternUnits="userSpaceOnUse"><rect width="28" height="14" fill="#C9BFAF"/><path d="M0 0H28M0 0V14" stroke="#8B8377" stroke-width="2"/></pattern></defs><rect width="320" height="200" fill="#BCC7C3"/><ellipse cx="160" cy="62" rx="110" ry="30" fill="#8FA9B6"/><ellipse cx="160" cy="58" rx="92" ry="22" fill="#A9CBDD"/><path d="M160 58V14M146 58l-8-34M174 58l8-34" stroke="#EAF4F8" stroke-width="4" stroke-linecap="round"/><g transform="translate(0 100) skewX(-18)"><rect x="-40" width="420" height="100" fill="url(#p)"/></g><path d="M70 150l90 6" stroke="#5E564C" stroke-width="5" stroke-linecap="round"/></svg>`),
     boxes: [{ x: 6, y: 56, w: 88, h: 40, t: '보도블록 틈 · 단차 3cm' }, { x: 18, y: 6, w: 64, h: 40, t: '분수대' }],
     tags: ['보도블록 틈', '단차 3cm', '서쪽 평탄 구간 우회'],
     text: '5·18 민주광장 분수대 진입로입니다. 보도블록 사이 틈 때문에 약 3센티미터의 단차가 생깁니다. 휠체어는 바퀴가 걸리지 않도록 천천히 이동하시고, 분수대 서쪽 평탄 구간을 이용하시길 권합니다.'
   },
   {
-    id: 's3', label: '상무관 안내판', pin: 'p4',
+    id: 's3', label: '상무관 안내판', pin: null,
     img: svgURI(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 200"><rect width="320" height="200" fill="#A7C29C"/><rect y="120" width="320" height="80" fill="#C9C2B4"/><rect x="70" y="16" width="180" height="104" rx="6" fill="#26352E"/><rect x="70" y="16" width="180" height="22" rx="6" fill="#3B5146"/><text x="160" y="32" text-anchor="middle" font-family="Malgun Gothic,Apple SD Gothic Neo,sans-serif" font-size="12" font-weight="700" fill="#F2EAD6">상무관 尙武館</text>${[50, 62, 74, 86, 98].map((y, i) => `<rect x="84" y="${y}" width="${150 - i * 14}" height="5" rx="2" fill="#C9D3C8" opacity=".75"/>`).join('')}<rect x="150" y="120" width="20" height="10" fill="#4A3C2E"/><g fill="#B2AA9A"><rect x="90" y="150" width="140" height="10"/><rect x="80" y="160" width="160" height="10"/><rect x="70" y="170" width="180" height="10"/></g><polygon points="250,180 300,150 300,156 250,186" fill="#8A6A4A"/></svg>`),
     boxes: [{ x: 22, y: 8, w: 56, h: 52, t: '안내판 텍스트 인식' }, { x: 21, y: 72, w: 58, h: 20, t: '계단 3단' }, { x: 77, y: 72, w: 18, h: 22, t: '우회로' }],
     tags: ['안내판 OCR', '석조 계단 3단', '오른쪽 목재 경사로'],
@@ -1529,7 +1549,7 @@ async function runDocent() {
     }
     out.textContent = result.text;
   }
-  $('#analyzeBtn').disabled = false; $('#replayBtn').disabled = false; $('#showOnMap').disabled = false;
+  $('#analyzeBtn').disabled = false; $('#replayBtn').disabled = false; $('#showOnMap').disabled = !pins.some(p => p.id === result.pin);
 }
 $('#analyzeBtn').addEventListener('click', () => { if (docentSel) { selectScene(docentSel); runDocent(); } });
 $('#replayBtn').addEventListener('click', () => docentResult && speak(docentResult.text));
@@ -1570,26 +1590,26 @@ const GENS = ['청소년', '청년', '중장년', '어르신'];
 const KEY_TERMS = ['오월', '도청', '민주주의', '주먹밥', '시민군', '평화', '기억', '용기', '희생', '정의', '연대', '진실', '광장', '분수대', '희망', '미래', '공동체', '총탄', '계엄군', '넋', '함성', '헌혈', '봄', '눈물', '정신', '세대', '책임', '감사', '묵념', '다짐', '시민'];
 
 const H = 3600e3;
+// 2026-10-14 현장 탐구에서 학생들이 남긴 소감 (1차 검수 통과 5건, 맞춤법만 바로잡음)
 const SAMPLE_MSGS = [
-  ['빛고을 고1', '청소년', '계엄군의 총탄 자국 앞에서 가슴이 먹먹해졌습니다. 잊지 않고 기억하겠습니다.', .1],
-  ['금남로 산책자', '청년', '시민들이 서로 주먹밥을 나누던 그 연대의 정신이 오늘날 우리에게 가장 필요한 가치입니다.', .4],
-  ['정보동아리 지후', '청소년', '도청 본관을 직접 눈으로 보니 민주주의가 얼마나 값진 희생 위에 세워졌는지 깨달았습니다.', 1],
-  ['충장동 주민', '중장년', '마지막까지 도청을 지킨 시민군의 용기를 기억합니다. 그 뜻을 이어가겠습니다.', 2],
-  ['오월의 기억', '어르신', '진실이 끝까지 규명되어 정의가 바로 서기를 바랍니다. 책임자는 반드시 답해야 합니다.', 3.5],
-  ['광장 여행자', '청년', '분수대 앞에 서니 그날의 함성이 들리는 듯합니다. 평화로운 오늘이 감사합니다.', 5],
-  ['두 아이 아빠', '중장년', '아이와 함께 왔습니다. 오월의 봄이 아이들의 미래에는 희망으로 피어나길 바랍니다.', 8],
-  ['방송반 서윤', '청소년', '헌혈하려고 줄을 섰던 시민들 이야기를 듣고 눈물이 났어요. 함께 사는 공동체의 힘을 배웠습니다.', 26],
-  ['스무 살의 벗', '어르신', '그때 저는 스무 살이었습니다. 먼저 간 벗들의 넋을 위로하며 묵념합니다.', 30],
-  ['토론부 민재', '청소년', '민주주의는 저절로 주어지지 않는다는 걸 배웠습니다. 우리 세대가 지키고 실천하겠습니다.', 50],
-  ['서울에서 온 대학생', '청년', '부당한 폭력에 맞섰던 평범한 사람들의 분노가 곧 정의였다고 생각합니다.', 55],
-  ['오월 길 해설사', '중장년', '오월 정신을 잊지 않고 다음 세대에게 이어가겠다고 다짐합니다. 평화가 꽃피기를.', 74]
+  ['umv7qgshu', '조대부고 고1', '청소년', '도청 앞에서 시민들의 용기를 보고, 저도 앞으로 용기 있게 살아가야겠다고 다짐했다.', '2026-10-14T15:32:59+09:00'],
+  ['umv7qhw05', '조대부고 고1', '청소년', '우리나라의 과거 아픈 역사를 생생하게 느낄 수 있었다.', '2026-10-14T15:33:50+09:00'],
+  ['umv7ql068', '한로로', '청소년', '도청 앞에서 시민들의 용기를 기억하겠다고 다짐했습니다.', '2026-10-14T15:36:16+09:00'],
+  ['umv7qsx0g', '조대부고 고1', '청소년', '총알 자국을 보면서, 공포가 있었을 텐데도 떠나지 않으신 시민분들이 자랑스러웠고 다시 한번 5·18 민주화운동을 깨닫게 되었다.', '2026-10-14T15:42:25+09:00'],
+  ['umv7r3y3e', '조대부고 고1', '청소년', '5·18 현장을 방문하면서 5·18 민주화운동 당시 많은 사람들이 겪었을 고통과 슬픔이 마음 깊이 와닿았다. 평범한 일상과 소중한 생명을 희생하면서까지 민주주의를 지키려 했다는 사실에 가슴이 먹먹해졌다. 이번 방문을 통해 지금 누리는 자유가 당연한 것이 아님을 깨달았고, 그날의 희생과 용기를 절대 잊지 않겠다고 다짐했다.', '2026-10-14T15:51:00+09:00']
 ];
-const seedMsgs = () => SAMPLE_MSGS.map(([nick, gen, text, h], i) => ({ id: 'm' + (i + 1), nick, gen, text, at: Date.now() - h * H }));
-let msgs = store.get('may.msgs.v1', null) || seedMsgs();
+const seedMsgs = () => SAMPLE_MSGS.map(([id, nick, gen, text, at]) => ({ id, nick, gen, text, at: Date.parse(at) }));
+const BASE_MSG_IDS = new Set(SAMPLE_MSGS.map(m => m[0]));
+let msgs = [...seedMsgs(), ...store.get('may.msgs.v1', []).filter(m => m.user && !BASE_MSG_IDS.has(m.id))];
 let lastAnalysis = null;
 let activeWord = null;
 const SURVEY_WAYS = ['방명록·메모판', 'QR·온라인 설문', '안내데스크·해설사', '의견함(종이)', '키오스크·화면', '홈페이지·SNS 안내', '찾지 못함', '기타'];
-let surveys = store.get('may.surveys.v1', []);
+// 2026-10-14 현장 조사 결과 (1차 검수 통과)
+const BASE_SURVEYS = [
+  { id: 'smv7rcsj3', base: true, sent: true, ways: ['방명록·메모판', '의견함(종이)'], where: '민원실 2층', note: '우편을 적는 곳', idea: '', photo: '', at: Date.parse('2026-10-14T15:57:52+09:00') }
+];
+const BASE_SURVEY_IDS = new Set(BASE_SURVEYS.map(v => v.id));
+let surveys = [...structuredClone(BASE_SURVEYS), ...store.get('may.surveys.v1', []).filter(v => !v.base && !BASE_SURVEY_IDS.has(v.id))];
 let svPhoto = '';
 const saveSurveys = () => { if (!store.set('may.surveys.v1', surveys)) toast('저장 공간이 부족해 이 기기에 저장하지 못했어요'); };
 const saveMsgs = () => { if (!store.set('may.msgs.v1', msgs)) toast('저장 공간이 부족해 이 기기에 저장하지 못했어요'); };
@@ -1765,7 +1785,7 @@ function renderFeed(newId) {
     const av = AV_COLORS[[...m.nick].reduce((s, ch) => s + ch.charCodeAt(0), 0) % AV_COLORS.length];
     return `<article class="msg${m.id === newId ? ' is-new' : ''}">
       <div class="msg-head"><span class="avatar" style="background:var(${av})">${esc([...m.nick][0] || '?')}</span>
-        <div class="msg-who"><b>${esc(m.nick)}</b><small>${relTime(m.at)}${m.user ? (m.sent ? ' · 제출 완료' : ' · 제출 대기') : ' · 예시'}</small></div><span class="gen">${esc(m.gen)}</span></div>
+        <div class="msg-who"><b>${esc(m.nick)}</b><small>${relTime(m.at)}${m.user ? (m.sent ? ' · 제출 완료' : ' · 제출 대기') : ' · 현장 소감'}</small></div><span class="gen">${esc(m.gen)}</span></div>
       <p>${esc(m.text)}</p>
       <div class="msg-tags">${m.user ? `<button class="place-del" type="button" data-mdel="${m.id}" style="margin-left:auto;order:2">${icon('trash')}삭제</button>` : ''}${top.length ? top.map(e => `<span class="eb" style="--x:var(${e.v})">${e.name}</span>`).join('') : '<span class="eb" style="--x:var(--ink-3)">감정 신호 없음</span>'}</div>
     </article>`;
@@ -1843,7 +1863,7 @@ $('#msgForm').addEventListener('submit', e => {
   toast('메시지를 아카이브에 추가했어요');
 });
 $('#resetMsgs').addEventListener('click', e => armButton(e.currentTarget, '한 번 더 누르면 초기화', () => {
-  msgs = seedMsgs(); lastAnalysis = null; activeWord = null; saveMsgs(); $('#anaOut').innerHTML = ''; renderEcho(); toast('샘플 메시지로 되돌렸어요');
+  msgs = seedMsgs(); lastAnalysis = null; activeWord = null; saveMsgs(); $('#anaOut').innerHTML = ''; renderEcho(); toast('현장 소감으로 되돌렸어요');
 }));
 
 /* ---------- 현장 조사: 의견·후기 수렴 방법 ---------- */
@@ -1852,8 +1872,8 @@ function renderSurveys() {
   const list = surveys.slice().sort((a, b) => b.at - a.at);
   $('#surveyList').innerHTML = list.length ? list.map(v => `<div class="place" style="grid-template-columns:52px minmax(0,1fr) auto">
       ${v.photo ? `<img src="${esc(v.photo)}" alt="">` : `<span class="photo-prev" style="width:52px;height:52px">${icon('search')}</span>`}
-      <div class="place-main" style="cursor:default"><b>${esc(v.ways.join(' · ') || '방법 미선택')}</b><span>${v.sent ? '<span class="user-tag">제출 완료</span>' : '<span class="user-tag wait">제출 대기</span>'}${esc(v.where || '위치 미기록')}</span></div>
-      <div class="place-side"><button class="place-del" type="button" data-sdel="${v.id}">${icon('trash')}삭제</button></div>
+      <div class="place-main" style="cursor:default"><b>${esc(v.ways.join(' · ') || '방법 미선택')}</b><span>${v.base ? '<span class="user-tag ex">10.14 조사</span>' : v.sent ? '<span class="user-tag">제출 완료</span>' : '<span class="user-tag wait">제출 대기</span>'}${esc(v.where || '위치 미기록')}${v.note ? ' · ' + esc(v.note) : ''}</span></div>
+      <div class="place-side">${v.base ? '' : `<button class="place-del" type="button" data-sdel="${v.id}">${icon('trash')}삭제</button>`}</div>
     </div>`).join('') : '<div class="empty">아직 기록이 없어요.<br>방명록, 설문 QR, 의견함, 안내데스크를 찾아보세요.</div>';
 }
 $('#sv-photo').addEventListener('change', async e => {
@@ -1961,7 +1981,7 @@ function renderSync() {
   const chip = $('#topSync');
   chip.textContent = waitN ? `제출 대기 ${waitN}` : '베이스라인 v1.0';
   chip.classList.toggle('wait', waitN > 0);
-  $('#sync-done').textContent = pins.filter(p => p.user && p.sent).length + msgs.filter(m => m.user && m.sent).length + surveys.filter(v => v.sent).length;
+  $('#sync-done').textContent = pins.filter(p => p.user && p.sent).length + msgs.filter(m => m.user && m.sent).length + surveys.filter(v => v.sent && !v.base).length;
   const note = $('#sync-note');
   let msg = '', warn = false;
   if (inArtifactView) { msg = 'claude.ai 미리보기에서는 제출할 수 없어요. 선생님이 알려 준 학생용 주소에서 제출해 주세요.'; warn = true; }
