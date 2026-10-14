@@ -4,7 +4,16 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#1B2747">
-<meta name="description" content="옛 전남도청·5·18 민주광장 무장애 지도와 방문 소감 · 조선대학교부속고등학교 학생 현장 조사(2026.10.14)">
+<meta name="description" content="모두가 걸을 수 있는 5·18 사적지 무장애 지도와 방문 소감. 누구나 정보를 보태고 후기를 남길 수 있는 참여형 웹앱 · 조선대학교부속고등학교 학생 현장 조사">
+<meta property="og:type" content="website">
+<meta property="og:title" content="오월의 길과 메아리">
+<meta property="og:description" content="모두가 걸을 수 있는 5·18 사적지 무장애 지도와 방문 소감. 누구나 정보를 보태고 후기를 남길 수 있는 참여형 웹앱 · 조선대학교부속고등학교 학생 현장 조사">
+<meta property="og:url" content="https://richee-pc.github.io/may-project/public/">
+<meta property="og:image" content="https://richee-pc.github.io/may-project/public/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ko_KR">
+<meta name="twitter:card" content="summary_large_image">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style>
 </head>
 <body class="public">
@@ -27,7 +36,7 @@
   --shadow:0 1px 2px rgba(22,30,26,.06),0 10px 28px rgba(22,30,26,.08);
   --f-display:'Hahmlet','Nanum Myeongjo','AppleMyungjo',serif;
   --f-body:'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif;
-  --f-mono:'IBM Plex Mono',ui-monospace,Consolas,monospace;
+  --f-mono:'IBM Plex Mono','IBM Plex Sans KR','Malgun Gothic',ui-monospace,Consolas,monospace;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#0E1311; --surface:#161D1A; --surface-2:#1F2824; --line:#2B3530;
@@ -297,6 +306,22 @@ body.public .d-grid.pub1{grid-template-columns:minmax(0,1fr)}
 .bld-pin-icon{background:none;border:0}
 .bpin{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--ink);color:var(--bg);font-family:var(--f-mono);font-weight:700;font-size:14px;border:3px solid var(--surface);box-shadow:0 2px 8px rgba(0,0,0,.3)}
 .bpin.est{background:var(--ink-3)}
+/* 한글이 들어가는 작은 표시는 본문 글꼴로 (고정폭 글꼴은 숫자 전용) */
+.eyebrow,.hero-date,.hero-meta,.user-tag,.route .rc,.floor .fl,.track h3 small,.top-chip,.field em,.ck-text small,.todo code,.tag-todo,.page-head h1 small{font-family:var(--f-body);font-variant-numeric:tabular-nums}
+.eyebrow{letter-spacing:.04em}
+.hero-date{letter-spacing:.02em}
+.hero-meta b{font-variant-numeric:tabular-nums}
+/* 모바일에서 제목·보조 문구가 좁아지면 아래로 */
+.sec-head{flex-wrap:wrap;row-gap:2px}
+/* 장소 이름은 잘리지 않게 두 줄까지 */
+.place-main b{white-space:normal;overflow:hidden;text-overflow:clip;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+/* 시설 유형 버튼 안 색 점 */
+.radio-chips span.dot{padding:0;border:0;width:9px;height:9px;border-radius:50%;flex:none}
+/* 공감 지수: 숫자가 줄바꿈되지 않게 */
+.kpi-gauge .kpi-value{white-space:nowrap}
+.kpi-gauge svg{width:64px;height:37px;flex:0 1 64px;min-width:44px}
+/* 공개 페이지: 학생용 번호·내려받기 숨김 */
+body.public #msgForm .sn,body.public .feed-tools .btn{display:none}
 .foot{margin-top:34px;padding-top:16px;border-top:1px solid var(--line);font-size:12px;color:var(--ink-3);display:flex;flex-wrap:wrap;gap:6px 16px;justify-content:space-between}
 
 /* ---------- Track C: map ---------- */
@@ -500,7 +525,7 @@ svg.leaflet-zoom-animated{will-change:transform}
 .cloud button{font-family:var(--f-display);font-weight:700;background:none;border:0;cursor:pointer;line-height:1.15;padding:3px 7px;border-radius:10px;color:var(--wc);transition:background .2s,transform .2s;letter-spacing:-.02em}
 .cloud button:hover{transform:translateY(-1px)}
 .cloud button[aria-pressed="true"]{background:var(--d-soft);box-shadow:inset 0 0 0 1.5px var(--d)}
-.cloud button sup{font-family:var(--f-mono);font-size:10px;font-weight:500;color:var(--ink-3);margin-left:2px}
+.cloud button sup{font-family:var(--f-mono);font-size:10.5px;font-weight:500;color:var(--ink-3);margin-left:2px}
 .gen{display:inline-flex;font-size:11px;font-weight:600;padding:2px 8px;border-radius:999px;background:var(--surface-2);color:var(--ink-2)}
 .ana{margin-top:14px;padding:14px;border-radius:16px;background:var(--d-soft);animation:fade .4s}
 .ana-head{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12.5px;font-weight:700;color:var(--d);margin-bottom:8px}
@@ -542,7 +567,7 @@ svg.leaflet-zoom-animated{will-change:transform}
   <div class="wrap">
     <a class="brand" href="#home" data-nav="home" aria-label="오월 프로젝트 홈">
       <span class="brand-mark">5·18</span>
-      <span class="brand-text"><strong>오월 프로젝트</strong><small>구전남도청 AI 정보동아리</small></span>
+      <span class="brand-text"><strong>오월 프로젝트</strong><small><span class="so">구전남도청 AI 정보동아리</span><span class="poi">조선대학교부속고등학교 학생 프로젝트</span></small></span>
     </a>
     <nav class="topnav" aria-label="트랙 이동">
       <a href="#home" data-nav="home"><svg class="ic" viewBox="0 0 24 24" data-i="home"></svg>홈</a>
@@ -560,7 +585,7 @@ svg.leaflet-zoom-animated{will-change:transform}
       <canvas id="petals" aria-hidden="true"></canvas>
       <div class="hero-date"><span>1980. 5. 18</span><i></i><span>5. 27</span><span style="opacity:.7">· 열흘간의 항쟁</span></div>
       <h1 id="home-title">오월을 걷고,<br>오월을 <em>듣다</em>.</h1>
-      <p>옛 전남도청과 5·18 민주광장을 직접 답사하고, 우리가 모은 데이터로 모두가 걸을 수 있는 길과 시민의 목소리를 기록하는 정보동아리 AI 프로젝트입니다.</p>
+      <p><span class="so">옛 전남도청과 5·18 민주광장을 직접 답사하고, 우리가 모은 데이터로 모두가 걸을 수 있는 길과 시민의 목소리를 기록하는 정보동아리 AI 프로젝트입니다.</span><span class="poi">고등학생들이 옛 전남도청과 5·18 민주광장을 직접 걸으며 모두가 걸을 수 있는 길과 시민의 목소리를 기록했어요. 누구나 정보를 보태고 후기를 남길 수 있는 참여형 지도입니다.</span></p>
       <div class="hero-meta">
         <span>답사지 <b>옛 전남도청 · 5·18 민주광장</b></span>
         <span>좌표 <b>35.1472°N 126.9208°E</b></span>
@@ -801,7 +826,7 @@ svg.leaflet-zoom-animated{will-change:transform}
     <div class="page-head">
       <span class="eyebrow">Track D · 감성 분석 대시보드</span>
       <h1 id="echo-title">오월의 메아리<small>Echo of May</small></h1>
-      <p>구전남도청 방문객의 추모·평화 메시지를 모아 감정을 분석하는 아카이브입니다. 메시지를 남기면 모든 지표가 바로 다시 계산돼요.</p>
+      <p><span class="so">구전남도청 방문객의 추모·평화 메시지를 모아 감정을 분석하는 아카이브입니다. 메시지를 남기면 모든 지표가 바로 다시 계산돼요.</span><span class="poi">옛 전남도청을 찾은 학생과 방문객이 남긴 소감을 모아 추모·정의·연대·평화·결의 다섯 가지 감정으로 분석해요. 후기를 남기면 확인을 거쳐 함께 보여요.</span></p>
     </div>
 
     <div class="guide so" style="margin-bottom:14px">
@@ -864,7 +889,7 @@ svg.leaflet-zoom-animated{will-change:transform}
         <p class="privacy po">실명·연락처는 적지 말고 별명을 써 주세요. 후기는 학생 동아리가 확인한 뒤 게시돼요.</p>
         <input class="hp" type="text" id="hp-msg" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
         <p class="err" id="m-err" hidden></p>
-        <button class="btn btn-d btn-block" type="submit"><span class="sn">3</span>자연어 감성 분석 실행</button>
+        <button class="btn btn-d btn-block" type="submit"><span class="sn">3</span><span class="so">자연어 감성 분석 실행</span><span class="poi">후기 남기고 감정 분석 보기</span></button>
         <div id="anaOut"></div>
       </form>
 
@@ -881,7 +906,7 @@ svg.leaflet-zoom-animated{will-change:transform}
     </div>
 
     <div class="card" id="surveyCard" style="margin-top:12px;scroll-margin-top:72px">
-      <div class="card-head"><div><h3>현장 조사: 의견은 어떻게 모을까?</h3><div class="sub">구전남도청은 체험자·관광객의 의견과 후기를 어떻게 받고 있는지 찾아 기록해요</div></div><span class="tag so" style="background:var(--d-soft);color:var(--d)">답사 과제</span></div>
+      <div class="card-head"><div><h3><span class="so">현장 조사: 의견은 어떻게 모을까?</span><span class="poi">이곳은 방문객 의견을 어떻게 모을까?</span></h3><div class="sub"><span class="so">구전남도청은 체험자·관광객의 의견과 후기를 어떻게 받고 있는지 찾아 기록해요</span><span class="poi">학생들이 현장에서 찾아본 의견·후기 수렴 방식이에요</span></div></div><span class="tag so" style="background:var(--d-soft);color:var(--d)">답사 과제</span></div>
       <div class="d-grid pub1" style="margin-top:0">
         <form class="form-stack so" id="surveyForm" novalidate>
           <div class="field"><span class="field-label" id="sv-way-label"><span class="sn">1</span>찾은 방법 <em>여러 개 선택</em></span><div class="radio-chips" id="sv-ways" role="group" aria-labelledby="sv-way-label"></div></div>
@@ -900,7 +925,7 @@ svg.leaflet-zoom-animated{will-change:transform}
           <button class="btn btn-d btn-block" type="submit"><span class="sn">5</span>조사 기록 저장</button>
         </form>
         <div>
-          <div class="field-label" style="margin-bottom:8px">내 조사 기록</div>
+          <div class="field-label" style="margin-bottom:8px"><span class="so">내 조사 기록</span><span class="poi">조사 결과</span></div>
           <div class="places" id="surveyList"></div>
         </div>
       </div>
@@ -1363,7 +1388,7 @@ function renderRoute() {
   const el = $('#route'); if (!el) return;
   el.innerHTML = BUILDINGS.map(b => {
     const n = pins.filter(p => p.bld === b.n).length;
-    return `<li><button type="button" data-bld="${b.n}" aria-pressed="${bldFilter === b.n}"><span class="rn">${b.n}</span><span><b>${esc(b.name)}</b><small>${esc(b.about)}${b.fac ? ' · ' + esc(b.fac) + ' 있음(팸플릿 기준)' : ''}</small></span><span class="rc${n ? '' : ' zero'}">${n ? n + '곳' : '조사 필요'}</span></button></li>`;
+    return `<li><button type="button" data-bld="${b.n}" aria-pressed="${bldFilter === b.n}"><span class="rn">${b.n}</span><span><b>${esc(b.name)}</b><small>${esc(b.about)}</small></span><span class="rc${n ? '' : ' zero'}">${n ? n + '곳' : '조사 필요'}</span></button></li>`;
   }).join('');
 }
 $('#route').addEventListener('click', e => {
@@ -1487,7 +1512,7 @@ function ensureMap() {
     $('#map').innerHTML = '<div class="map-fallback">지도 라이브러리를 불러오지 못했어요.<br>인터넷 연결을 확인한 뒤 새로고침해 주세요.</div>';
     return;
   }
-  map = L.map('map', { zoomControl: false }).setView([35.1472, 126.9208], 17);
+  map = L.map('map', { zoomControl: false, zoomSnap: 0.25, zoomDelta: 0.5 }).setView([35.1469, 126.9200], 18);
   L.control.zoom({ position: 'bottomright' }).addTo(map);
   schematicLayer = buildSchematic();
   setTiles();
@@ -1502,7 +1527,11 @@ function ensureMap() {
   routeLayer = L.layerGroup().addTo(map);
   map.on('click', e => { if (pickMode) setFormLoc(e.latlng.lat, e.latlng.lng, true); });
   renderMarkers();
-  setTimeout(() => map.invalidateSize(), 120);
+  setTimeout(() => {
+    map.invalidateSize();
+    const pts = pins.map(p => [p.lat, p.lng]).concat(BUILDINGS.filter(b => b.lat).map(b => [b.lat, b.lng]));
+    if (pts.length) map.fitBounds(L.latLngBounds(pts), { paddingTopLeft: [24, 70], paddingBottomRight: [56, 24], maxZoom: 19, animate: false });   // 위쪽 범례, 오른쪽 아래 확대 버튼 자리 비우기
+  }, 120);
 }
 
 /* 필터 · 검색 · 목록 */
@@ -1822,7 +1851,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') $$('.sheet')
    ===================================================================== */
 const EMO = [
   { key: 'grief',   name: '추모/애도',   short: '숭고한 추모',     v: '--e1',
-    terms: ['추모', '애도', '먹먹', '눈물', '슬픔', '슬프', '넋', '영령', '묵념', '위로', '아픔', '아프', '명복', '가슴', '기억'] },
+    terms: ['추모', '애도', '먹먹', '눈물', '슬픔', '슬프', '넋', '영령', '묵념', '위로', '아픔', '아프', '아픈', '아팠', '고통', '명복', '가슴', '기억'] },
   { key: 'justice', name: '정의/분노',   short: '정의를 향한 외침', v: '--e2',
     terms: ['정의', '분노', '진실', '총탄', '계엄군', '학살', '규명', '부당', '폭력', '억울', '책임자', '맞서', '저항', '함성'] },
   { key: 'solid',   name: '연대/공동체', short: '연대와 나눔',     v: '--e3',
@@ -1891,11 +1920,11 @@ function empathy(a) {
 //   지금은 '띄어쓰기로 자르기 → 끝에 붙은 조사 하나 떼기 → 불용어 빼기' 만 하는 아주 단순한 버전입니다.
 //   개선 아이디어: 어미(-습니다, -했어요) 처리, 복합 명사 합치기, 동의어 묶기(5·18 = 오일팔) 등
 const JOSA = ['으로', '에서', '에게', '까지', '부터', '처럼', '보다', '이라', '의', '가', '이', '은', '는', '을', '를', '에', '와', '과', '도', '로', '만'];
-const STOPWORDS = new Set(['그', '저', '것', '수', '등', '더', '너무', '정말', '오늘', '우리', '그날', '그때', '직접', '가장', '얼마나', '반드시', '끝까지', '마지막', '않고', '잊지', '않는다는']);
+const STOPWORDS = new Set(['그', '저', '것', '수', '등', '더', '너무', '정말', '오늘', '우리', '그날', '그때', '직접', '가장', '얼마나', '반드시', '끝까지', '마지막', '않고', '잊지', '않는다는', '앞에서', '보면서', '통해', '이번', '당시', '많은', '지금']);
 function cleanTokens(text) {
   return text.replace(/[^가-힣a-zA-Z0-9\s]/g, ' ').split(/\s+/).filter(Boolean)
     .map(w => { for (const j of JOSA) { if (w.length > j.length + 1 && w.endsWith(j)) return w.slice(0, -j.length); } return w; })
-    .filter(w => w.length >= 2 && !STOPWORDS.has(w) && !/(습니다|합니다|니다|어요|아요|해요|하며|하고|해서|지만|는데|었다|였다|겠다|하길|기를|듯합)$/.test(w));
+    .filter(w => w.length >= 2 && !STOPWORDS.has(w) && !/^\d+$/.test(w) && !/(습니다|합니다|니다|어요|아요|해요|하며|하고|해서|지만|는데|었다|였다|겠다|하길|기를|듯합)$/.test(w));
 }
 function keywordCounts(list) {
   const counts = {};
@@ -2033,7 +2062,7 @@ function renderFeed(newId) {
       <div class="msg-head"><span class="avatar" style="background:var(${av})">${esc([...m.nick][0] || '?')}</span>
         <div class="msg-who"><b>${esc(m.nick)}</b><small>${relTime(m.at)}${m.user ? ' · ' + statusWord(m) : (m.visitor ? ' · 방문 후기' : ' · 현장 소감')}</small></div><span class="gen">${esc(m.gen)}</span></div>
       <p>${esc(m.text)}</p>
-      <div class="msg-tags">${m.user ? `<button class="place-del" type="button" data-mdel="${m.id}" style="margin-left:auto;order:2">${icon('trash')}삭제</button>` : ''}${top.length ? top.map(e => `<span class="eb" style="--x:var(${e.v})">${e.name}</span>`).join('') : '<span class="eb" style="--x:var(--ink-3)">감정 신호 없음</span>'}</div>
+      <div class="msg-tags">${m.user ? `<button class="place-del" type="button" data-mdel="${m.id}" style="margin-left:auto;order:2">${icon('trash')}삭제</button>` : ''}${top.map(e => `<span class="eb" style="--x:var(${e.v})">${e.name}</span>`).join('')}</div>
     </article>`;
   }).join('') : '<div class="empty">조건에 맞는 메시지가 없어요</div>';
 }
