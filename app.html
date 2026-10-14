@@ -230,6 +230,13 @@ main{padding-bottom:calc(92px + env(safe-area-inset-bottom,0px))}
 .flash{animation:flash 1.8s ease-out 1}
 @keyframes flash{0%,45%{box-shadow:0 0 0 4px var(--gold)}100%{box-shadow:0 0 0 0 transparent}}
 .po{display:none!important}
+.poi{display:none!important}
+body.public .poi{display:inline!important}
+body.public #pinForm .sn{display:none}
+.privacy{font-size:12.5px;color:var(--ink-3);background:var(--surface-2);border-radius:12px;padding:10px 12px;line-height:1.55}
+.hp{position:absolute!important;left:-9999px!important;width:1px;height:1px;opacity:0}
+.pp-fix{grid-column:1/-1}
+.join{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
 body.public .po{display:block!important}
 body.public .so{display:none!important}
 body.public .d-grid.pub1{grid-template-columns:minmax(0,1fr)}
@@ -513,7 +520,11 @@ svg.leaflet-zoom-animated{will-change:transform}
       <div class="about">
         <div class="card"><h3>누가 만들었나요</h3><p><b>조선대학교부속고등학교</b> 민주인권 동아리 <b>나우누리</b>와 인공지능 동아리 <b>알고리듬</b> 학생 20명이 옛 전남도청 일대를 직접 걸으며 조사하고, 학생들이 만든 웹앱으로 기록했습니다.</p></div>
         <div class="card"><h3>무엇을 담았나요</h3><p><b>오월의 길</b>: 휠체어·유모차·어르신이 이용할 때 필요한 경사로, 계단, 화장실 등 17곳의 단차와 통로 폭(줄자 실측). <b>오월의 메아리</b>: 학생들이 현장에서 남긴 소감과 방문객 의견 수렴 방식 조사.</p></div>
-        <div class="card"><h3>이용할 때 알아 두세요</h3><p>고등학생이 직접 잰 값으로, 지도교사 검수를 거친 기록만 실었습니다. 건물 안에서는 위치가 수 m 어긋날 수 있으며, 기관의 공식 안내가 아닙니다. 아래 탭에서 <b>오월의 길</b>과 <b>오월의 메아리</b>를 둘러보세요.</p></div>
+        <div class="card"><h3>함께 만들어 가요</h3><p>방문하신 분 누구나 <b>무장애 정보를 보태거나 고치고</b>, <b>방문 후기</b>를 남길 수 있어요. 보내 주신 내용은 학생 동아리가 확인한 뒤 모두에게 보여요. 학생과 방문객이 직접 잰 값이라 실제와 다를 수 있으며, 기관의 공식 안내가 아닙니다.</p></div>
+      </div>
+      <div class="join">
+        <button class="btn btn-c" type="button" data-go="path|#pinForm|#f-name"><svg class="ic" viewBox="0 0 24 24" data-i="map"></svg>무장애 정보 보태기</button>
+        <button class="btn btn-d" type="button" data-go="echo|#msgForm|#m-name"><svg class="ic" viewBox="0 0 24 24" data-i="echo"></svg>방문 후기 남기기</button>
       </div>
     </div>
 
@@ -670,8 +681,8 @@ svg.leaflet-zoom-animated{will-change:transform}
           <button class="btn btn-sm" type="button" id="routeBtn"><svg class="ic" viewBox="0 0 24 24" data-i="route"></svg>경로 찾기 실행</button>
         </div>
 
-        <form class="card form-stack so" id="pinForm" novalidate style="scroll-margin-top:72px">
-          <div class="card-head" style="margin-bottom:0"><div><h3>새 현장 데이터 등록</h3><div class="sub">답사에서 기록한 내용을 입력하면 지도에 바로 핀이 생겨요</div></div><span class="tag" style="background:var(--c-soft);color:var(--c)">학생 실습</span></div>
+        <form class="card form-stack" id="pinForm" novalidate style="scroll-margin-top:72px">
+          <div class="card-head" style="margin-bottom:0"><div><h3><span class="so">새 현장 데이터 등록</span><span class="poi">무장애 정보 보태기</span></h3><div class="sub"><span class="so">답사에서 기록한 내용을 입력하면 지도에 바로 핀이 생겨요</span><span class="poi">경사로·계단·화장실처럼 휠체어·유모차 이용에 필요한 정보를 알려 주세요</span></div></div><span class="tag so" style="background:var(--c-soft);color:var(--c)">학생 실습</span></div>
           <label class="field"><span><span class="sn">1</span>장소명</span><input id="f-name" placeholder="예: 별관 뒤편 우회 경사로" maxlength="40"></label>
           <div class="field"><span class="field-label" id="f-type-label"><span class="sn">1</span>시설 유형</span><div class="radio-chips type-grid" id="f-type" role="radiogroup" aria-labelledby="f-type-label"></div></div>
           <div class="row2">
@@ -679,7 +690,7 @@ svg.leaflet-zoom-animated{will-change:transform}
             <label class="field"><span><span class="sn">2</span>통로 폭<em>cm</em></span><input id="f-width" type="number" inputmode="numeric" min="0" step="1" placeholder="150"></label>
           </div>
           <label class="field"><span>상세 설명<span class="opt">선택</span></span><textarea id="f-desc" rows="3" placeholder="노면 상태, 손잡이 유무, 우회로 방향 등을 적어 주세요"></textarea></label>
-          <div class="field">
+          <div class="field so">
             <span class="field-label"><span class="sn">3</span>현장 사진 <em>왼쪽 카메라 칸을 눌러요</em></span>
             <div class="photo-row">
               <label class="photo-prev" id="f-photo-prev" for="f-photo" title="사진 선택"><svg class="ic" viewBox="0 0 24 24" data-i="camera"></svg></label>
@@ -695,8 +706,10 @@ svg.leaflet-zoom-animated{will-change:transform}
               <button class="btn btn-sm btn-ghost" type="button" id="gpsBtn"><svg class="ic" viewBox="0 0 24 24" data-i="pin"></svg>현재 위치</button>
             </div>
           </div>
+          <p class="privacy po">이름·연락처 같은 개인정보는 적지 말아 주세요. 보내 주신 정보는 학생 동아리가 확인한 뒤 지도에 반영해요.</p>
+          <input class="hp" type="text" id="hp-pin" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
           <p class="err" id="f-err" hidden></p>
-          <button class="btn btn-c btn-block" type="submit"><span class="sn">5</span>지도에 핀 추가</button>
+          <button class="btn btn-c btn-block" type="submit"><span class="sn">5</span><span class="so">지도에 핀 추가</span><span class="poi">정보 보내기</span></button>
         </form>
         <div class="so" style="text-align:center"><button class="reset" type="button" id="resetPins">현장 데이터로 되돌리기</button></div>
       </aside>
@@ -762,12 +775,14 @@ svg.leaflet-zoom-animated{will-change:transform}
       </div>
     </div>
 
-    <div class="d-grid pub1">
-      <form class="card form-stack so" id="msgForm" novalidate style="scroll-margin-top:72px">
-        <div class="card-head" style="margin-bottom:0"><div><h3>현장 메시지 남기기</h3><div class="sub">답사에서 느낀 점을 한 줄로 남겨 주세요</div></div></div>
+    <div class="d-grid">
+      <form class="card form-stack" id="msgForm" novalidate style="scroll-margin-top:72px">
+        <div class="card-head" style="margin-bottom:0"><div><h3><span class="so">현장 메시지 남기기</span><span class="poi">방문 후기 남기기</span></h3><div class="sub"><span class="so">답사에서 느낀 점을 한 줄로 남겨 주세요</span><span class="poi">옛 전남도청과 5·18 민주광장에서 느낀 점을 남겨 주세요</span></div></div></div>
         <label class="field"><span><span class="sn">1</span>닉네임<em>실명 대신 별명</em></span><input id="m-name" placeholder="예: 빛고을 고1" maxlength="16"></label>
         <div class="field"><span class="field-label" id="m-gen-label"><span class="sn">1</span>세대</span><div class="radio-chips" id="m-gen" role="radiogroup" aria-labelledby="m-gen-label"></div></div>
         <label class="field"><span><span class="sn">2</span>방문 소감</span><textarea id="m-text" rows="3" maxlength="300" placeholder="예: 도청 앞에서 시민들의 용기를 기억하겠다고 다짐했습니다."></textarea></label>
+        <p class="privacy po">실명·연락처는 적지 말고 별명을 써 주세요. 후기는 학생 동아리가 확인한 뒤 게시돼요.</p>
+        <input class="hp" type="text" id="hp-msg" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
         <p class="err" id="m-err" hidden></p>
         <button class="btn btn-d btn-block" type="submit"><span class="sn">3</span>자연어 감성 분석 실행</button>
         <div id="anaOut"></div>
@@ -899,6 +914,7 @@ const isDark = () => {
   return matchMedia('(prefers-color-scheme: dark)').matches;
 };
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const IS_PUBLIC = document.body.classList.contains('public');
 function hexA(hex, a) {
   const h = hex.replace('#', '');
   const n = parseInt(h.length === 3 ? h.split('').map(c => c + c).join('') : h, 16);
@@ -1132,7 +1148,7 @@ function renderPlaces() {
       <img src="${esc(thumb(p))}" alt="" loading="lazy" data-focus="${p.id}" style="cursor:pointer">
       <div class="place-main" data-focus="${p.id}" role="button" tabindex="0" aria-label="${esc(p.name)} 지도에서 보기">
         <b>${esc(p.name)}</b>
-        <span>${p.user ? (p.sent ? '<span class="user-tag">제출 완료</span>' : '<span class="user-tag wait">제출 대기</span>') : '<span class="user-tag ex">10.14 실측</span>'}${esc(t.label)} · 단차 ${fmtCm(p.step)}cm</span>
+        <span>${p.user ? statusTag(p) : (p.visitor ? '<span class="user-tag ex">방문객 제보</span>' : '<span class="user-tag ex">10.14 실측</span>')}${esc(t.label)} · 단차 ${fmtCm(p.step)}cm</span>
       </div>
       <div class="place-side">${signalHTML(grade(p))}${p.user ? `<button class="place-del" type="button" data-del="${p.id}">${icon('trash')}삭제</button>` : ''}</div>
     </div>`;
@@ -1143,13 +1159,14 @@ function popupHTML(p) {
   const t = TYPES[p.type];
   return `<div class="pp">
     <img class="pp-img" src="${esc(thumb(p))}" alt="${esc(p.name)} 사진">
-    <div class="pp-top">${signalHTML(grade(p))}<span class="pp-type">${esc(t.label)}${p.user ? '' : ' · 학생 실측(10.14)'}</span></div>
+    <div class="pp-top">${signalHTML(grade(p))}<span class="pp-type">${esc(t.label)}${p.user ? '' : (p.visitor ? ' · 방문객 제보' : ' · 학생 실측(10.14)')}</span></div>
     <h4>${esc(p.name)}</h4>
     <div class="pp-nums"><div><small>실측 단차</small><b>${fmtCm(p.step)}<i>cm</i></b></div><div><small>통로 폭</small><b>${fmtCm(p.width)}<i>cm</i></b></div></div>
     <p>${esc(p.desc || '상세 설명이 없습니다.')}</p>
     <div class="pp-act">
       <a class="btn btn-sm" href="${naverWebURL(p)}" target="_blank" rel="noopener" data-naver="${p.id}">${icon('route')}네이버 길찾기</a>
       <button class="btn btn-sm btn-c" type="button" data-speak="${p.id}">${icon('speaker')}음성 안내</button>
+      <button class="btn btn-sm pp-fix" type="button" data-fix="${p.id}">정보가 다른가요? 고쳐 주세요</button>
     </div>
   </div>`;
 }
@@ -1410,7 +1427,7 @@ $('#pinForm').addEventListener('submit', e => {
   $('#f-step').value = 0;
   setFormLoc(map ? map.getCenter().lat : formLoc.lat, map ? map.getCenter().lng : formLoc.lng);
   if (tempMarker && map) { map.removeLayer(tempMarker); tempMarker = null; }
-  toast(`‘${p.name}’ 핀을 지도에 추가했어요`);
+  toast(IS_PUBLIC ? `‘${p.name}’ 정보를 보냈어요. 확인 후 모두에게 보여요` : `‘${p.name}’ 핀을 지도에 추가했어요`);
   focusPin(p.id);
 });
 $('#resetPins').addEventListener('click', e => armButton(e.currentTarget, '한 번 더 누르면 초기화', () => {
@@ -1793,7 +1810,7 @@ function renderFeed(newId) {
     const av = AV_COLORS[[...m.nick].reduce((s, ch) => s + ch.charCodeAt(0), 0) % AV_COLORS.length];
     return `<article class="msg${m.id === newId ? ' is-new' : ''}">
       <div class="msg-head"><span class="avatar" style="background:var(${av})">${esc([...m.nick][0] || '?')}</span>
-        <div class="msg-who"><b>${esc(m.nick)}</b><small>${relTime(m.at)}${m.user ? (m.sent ? ' · 제출 완료' : ' · 제출 대기') : ' · 현장 소감'}</small></div><span class="gen">${esc(m.gen)}</span></div>
+        <div class="msg-who"><b>${esc(m.nick)}</b><small>${relTime(m.at)}${m.user ? ' · ' + statusWord(m) : (m.visitor ? ' · 방문 후기' : ' · 현장 소감')}</small></div><span class="gen">${esc(m.gen)}</span></div>
       <p>${esc(m.text)}</p>
       <div class="msg-tags">${m.user ? `<button class="place-del" type="button" data-mdel="${m.id}" style="margin-left:auto;order:2">${icon('trash')}삭제</button>` : ''}${top.length ? top.map(e => `<span class="eb" style="--x:var(${e.v})">${e.name}</span>`).join('') : '<span class="eb" style="--x:var(--ink-3)">감정 신호 없음</span>'}</div>
     </article>`;
@@ -1868,7 +1885,7 @@ $('#msgForm').addEventListener('submit', e => {
   $('#m-text').value = '';
   renderEcho(m.id);
   renderSync(); submitAll(true, true);
-  toast('메시지를 아카이브에 추가했어요');
+  toast(IS_PUBLIC ? '후기를 보냈어요. 확인 후 게시돼요. 고맙습니다!' : '메시지를 아카이브에 추가했어요');
 });
 $('#resetMsgs').addEventListener('click', e => armButton(e.currentTarget, '한 번 더 누르면 초기화', () => {
   msgs = seedMsgs(); lastAnalysis = null; activeWord = null; saveMsgs(); $('#anaOut').innerHTML = ''; renderEcho(); toast('현장 소감으로 되돌렸어요');
@@ -2001,11 +2018,10 @@ function renderSync() {
   $('#sync-btn').lastChild.textContent = syncing ? '제출 중…' : '지금 제출';
 }
 async function submitAll(silent, hint) {
-  if (document.body.classList.contains('public')) return;
   const list = pendingItems();
   if (!list.length) { if (!silent) toast('새로 보낼 기록이 없어요'); renderSync(); return; }
   if (inArtifactView || !SUBMIT_URL) { if (!silent) toast('지금 화면에서는 제출할 수 없어요. 기록은 이 휴대폰에 보관돼요'); return; }
-  if (!syncCfg.code || !syncCfg.name) {
+  if (!IS_PUBLIC && (!syncCfg.code || !syncCfg.name)) {
     if (!silent) { toast('반 코드와 이름을 먼저 입력해 주세요'); location.hash = 'home'; setTimeout(() => $('#sync-code').focus(), 300); }
     else if (hint) setTimeout(() => toast('아직 제출 안 됐어요! 홈의 "선생님께 제출" 칸에 반 코드와 이름을 넣어 주세요'), 1800);
     return;
@@ -2015,15 +2031,21 @@ async function submitAll(silent, hint) {
   let ok = 0, fail = 0, err = '';
   for (const { kind, item } of list) {
     try {
-      const { sent, user, ...data } = item;
+      const { sent, user, rejected, ...data } = item;
+      if (IS_PUBLIC) delete data.photo;   // 방문객은 사진을 보내지 않아요
       const res = await fetch(SUBMIT_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },   // 단순 요청으로 보내 CORS 사전 요청을 피해요
-        body: JSON.stringify({ code: syncCfg.code, team: syncCfg.name, kind, item: data })   // 시트의 두 번째 열(제출자)에 이름이 들어가요
+        body: JSON.stringify(IS_PUBLIC
+          ? { code: 'visitor', kind, item: data, hp: ($('#hp-pin').value || $('#hp-msg').value) }
+          : { code: syncCfg.code, team: syncCfg.name, kind, item: data })   // 학생은 시트의 제출자 열에 이름이 들어가요
       });
       const j = await res.json();
       if (j.ok) { item.sent = true; ok++; }
-      else { fail++; err = j.error || 'server'; if (err === 'bad_code') break; }
+      else if (/^(bad_|out_of_area|too_long)/.test(j.error || '') && j.error !== 'bad_code') {
+        item.sent = true; item.rejected = j.error; fail++; err = j.error;   // 다시 보내도 안 되는 글은 더 보내지 않아요
+      }
+      else { fail++; err = j.error || 'server'; if (IS_PUBLIC && err === 'bad_code') err = 'server'; if (err === 'bad_code' || err === 'server') break; }   // 공개 페이지는 서버 준비 전이면 조용히 다시 시도
     } catch (e) { fail++; err = 'network'; break; }
   }
   savePins(); saveMsgs(); saveSurveys();
@@ -2031,8 +2053,10 @@ async function submitAll(silent, hint) {
   renderSync(); renderPlaces(); renderFeed(); renderSurveys();
   if (!fail && pendingItems().length) setTimeout(() => submitAll(true), 300);
   if (err === 'bad_code') toast('반 코드가 맞지 않아요. 선생님께 확인해 주세요');
-  else if (fail) { if (!silent || ok) toast(`${ok}건 제출, 나머지는 인터넷이 연결되면 다시 보낼게요`); }
-  else toast(`${ok}건을 선생님께 제출했어요`);
+  else if (err === 'out_of_area') toast('옛 전남도청 주변 위치만 등록할 수 있어요');
+  else if (/^(bad_|too_long)/.test(err)) toast('입력한 내용을 확인해 주세요. 글자 수가 너무 짧거나 길 수 있어요');
+  else if (fail) { if (!silent || ok) toast(`${ok}건 보냄, 나머지는 인터넷이 연결되면 다시 보낼게요`); }
+  else if (!IS_PUBLIC) toast(`${ok}건을 선생님께 제출했어요`);
 }
 ['code', 'name'].forEach(k => {
   const el = $('#sync-' + k);
@@ -2044,6 +2068,51 @@ addEventListener('online', () => submitAll(true));
 document.addEventListener('visibilitychange', () => { if (!document.hidden) submitAll(true); });
 // 제출이 잠깐 실패해도(신호 약함, 동시 제출) 화면이 켜져 있는 동안 30초마다 다시 보내요
 setInterval(() => { if (!document.hidden && pendingItems().length) submitAll(true); }, 30000);
+
+/* 공개(참여형) 페이지 여부와 상태 표시 */
+function statusWord(it) {
+  if (it.rejected) return '등록 불가';
+  if (IS_PUBLIC) return it.sent ? '확인 중' : '전송 대기';
+  return it.sent ? '제출 완료' : '제출 대기';
+}
+function statusTag(it) {
+  const cls = it.rejected ? 'user-tag wait' : it.sent ? 'user-tag' : 'user-tag wait';
+  return `<span class="${cls}">${statusWord(it)}</span>`;
+}
+
+/* 검수 O 인 글을 시트에서 불러와 모두에게 보여 줘요 (실패하면 페이지에 담긴 기본 데이터만 보여요) */
+async function loadApproved() {
+  if (inArtifactView || !SUBMIT_URL) return;
+  try {
+    const res = await fetch(SUBMIT_URL + '?action=list');
+    const j = await res.json();
+    if (!j.ok) return;
+    const pinIds = new Set((j.pins || []).map(x => x.id)), msgIds = new Set((j.msgs || []).map(x => x.id));
+    pins = pins.filter(x => !(x.user && pinIds.has(x.id)));        // 내가 보낸 글이 승인되면 '확인 중' 대신 공개 글로
+    msgs = msgs.filter(x => !(x.user && msgIds.has(x.id)));
+    (j.pins || []).forEach(x => { if (!pins.some(y => y.id === x.id) && TYPES[x.type] && isFinite(x.lat) && isFinite(x.lng)) pins.push(x); });
+    (j.msgs || []).forEach(x => { if (!msgs.some(y => y.id === x.id) && x.text) msgs.push(x); });
+    savePins(); saveMsgs();
+    renderPath(); renderEcho();
+  } catch (e) { /* 연결이 안 되면 기본 데이터만 보여요 */ }
+}
+
+/* 지도 팝업의 '고쳐 주세요' → 같은 장소로 입력 폼을 채워 줘요 */
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-fix]'); if (!b) return;
+  const p = pins.find(x => x.id === b.dataset.fix); if (!p) return;
+  if (map) map.closePopup();
+  $('#f-name').value = p.name;
+  const r = $('#ftype-' + p.type); if (r) r.checked = true;
+  $('#f-step').value = p.step === '' ? 0 : p.step;
+  $('#f-width').value = p.width;
+  $('#f-desc').value = '[수정 제안] ';
+  setFormLoc(p.lat, p.lng);
+  $('#pinForm').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+  $('#pinForm').classList.remove('flash'); void $('#pinForm').offsetWidth; $('#pinForm').classList.add('flash');
+  setTimeout(() => { const d = $('#f-desc'); d.focus({ preventScroll: true }); d.setSelectionRange(d.value.length, d.value.length); }, 600);
+  toast('달라진 점을 설명 칸에 적어 주세요');
+});
 
 /* 안내 바로가기: data-go="화면|강조할 영역|커서를 둘 칸" */
 document.addEventListener('click', e => {
@@ -2069,4 +2138,5 @@ setFormLoc(formLoc.lat, formLoc.lng);
 renderSync();
 route();
 setTimeout(() => submitAll(true), 1500);
+loadApproved();
 </script>
